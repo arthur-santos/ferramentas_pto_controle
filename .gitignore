@@ -1,0 +1,7 @@
+.vscode/
+help/
+test/
+Thumbs.db
+Desktop.ini
+__pycache__
+*.pyc

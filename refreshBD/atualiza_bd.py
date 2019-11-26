@@ -28,6 +28,7 @@ import os
 import sys
 import csv
 import psycopg2
+from pathlib import Path
 
 
 class AtualizaBD():
@@ -43,7 +44,7 @@ class AtualizaBD():
         for root, dirs, files in os.walk(self.pasta):
             for f in files:
                 if f.endswith(".csv"):
-                    with open(os.path.join(root, f), 'rb') as csv_file:
+                    with open(os.path.join(root, f)) as csv_file:
                         csv_reader = csv.DictReader(csv_file)
                         for row in csv_reader:
                             aux = {}

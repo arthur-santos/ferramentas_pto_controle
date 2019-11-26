@@ -31,8 +31,8 @@ __copyright__ = '(C) 2019 by 1CGEO/DSG'
 __revision__ = '$Format:%H$'
 
 from qgis.core import QgsProcessingProvider
-from .ponto_controle_algorithm import PontoControleAlgorithm
-from .refresh_db import RefreshBD
+from .validatePoints.ponto_controle_algorithm import PontoControleAlgorithm
+from .refreshBD.refresh_db import RefreshBD
 
 
 class PontoControleProvider(QgsProcessingProvider):

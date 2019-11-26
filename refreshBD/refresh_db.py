@@ -35,7 +35,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterString,
-                       QgsProcessingParameterNumber)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterBoolean)
 from qgis.PyQt.QtCore import QCoreApplication
 from .atualiza_bd import AtualizaBD
 
@@ -128,8 +129,9 @@ class RefreshBD(QgsProcessingAlgorithm):
         bdname = self.parameterAsString(parameters, self.BDNAME, context)
         user = self.parameterAsString(parameters, self.USER, context)
         password = self.parameterAsString(parameters, self.PASSWORD, context)
+        createdb = self.parameterAsBoolean(parameters, self.PASSWORD, context)
 
-        refresh = AtualizaBD(folder, server_ip, port, bdname, user, password)
+        refresh = AtualizaBD(folder, server_ip, port, bdname, user, password, createdb)
         points = refresh.getPontosFromCSV()
         refresh.atualiza(points)
 

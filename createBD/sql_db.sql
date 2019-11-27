@@ -86,7 +86,7 @@ ALTER FUNCTION controle.atualiza_grade_mi()
 
 CREATE TRIGGER atualiza_grade_mi
 AFTER UPDATE OR INSERT OR DELETE ON controle.ponto_controle_p
-FOR EACH STATEMENT EXECUTE PROCEDURE controle.atualiza_grade_mi()
+FOR EACH STATEMENT EXECUTE PROCEDURE controle.atualiza_grade_mi();
 
 
 COMMIT;

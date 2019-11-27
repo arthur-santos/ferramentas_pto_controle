@@ -33,6 +33,7 @@ __revision__ = '$Format:%H$'
 from qgis.core import QgsProcessingProvider
 from .validatePoints.ponto_controle_algorithm import PontoControleAlgorithm
 from .refreshBD.refresh_db import RefreshBD
+from .createBD.create_db import CreateDatabase
 
 
 class PontoControleProvider(QgsProcessingProvider):
@@ -58,6 +59,7 @@ class PontoControleProvider(QgsProcessingProvider):
         """
         self.addAlgorithm(PontoControleAlgorithm())
         self.addAlgorithm(RefreshBD())
+        self.addAlgorithm(CreateDatabase())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

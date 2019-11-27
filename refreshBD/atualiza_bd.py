@@ -28,7 +28,6 @@ import os
 import sys
 import csv
 import psycopg2
-from pathlib import Path
 
 
 class AtualizaBD():

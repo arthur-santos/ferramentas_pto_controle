@@ -34,9 +34,12 @@ from qgis.core import QgsProcessingProvider
 from .validatePoints.ponto_controle_algorithm import PontoControleAlgorithm
 from .refreshBD.refresh_db import RefreshBD
 from .createBD.create_db import CreateDatabase
+<<<<<<< HEAD
 from .prePPP.prePPP import PrePPP
 from .afterPPP.afterPPP import AfterPPP
 from .loadToBPC.loadToBPC import LoadToBPC
+=======
+>>>>>>> 3d4af40a2e53c36b4768ee9206d89201b6941710
 
 
 class PontoControleProvider(QgsProcessingProvider):
@@ -63,9 +66,12 @@ class PontoControleProvider(QgsProcessingProvider):
         self.addAlgorithm(PontoControleAlgorithm())
         self.addAlgorithm(RefreshBD())
         self.addAlgorithm(CreateDatabase())
+<<<<<<< HEAD
         self.addAlgorithm(PrePPP())
         self.addAlgorithm(AfterPPP())
         self.addAlgorithm(LoadToBPC())
+=======
+>>>>>>> 3d4af40a2e53c36b4768ee9206d89201b6941710
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

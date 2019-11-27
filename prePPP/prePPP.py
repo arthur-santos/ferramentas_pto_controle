@@ -32,13 +32,12 @@ __revision__ = '$Format:%H$'
 
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterNumber)
+                       QgsProcessingParameterFile)
 from qgis.PyQt.QtCore import QCoreApplication
-from .gera_bd import GeraBD
+from .utils import *
 
 
-class CreateDatabase(QgsProcessingAlgorithm):
+class PrePPP(QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -57,11 +56,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
     # calling from the QGIS console.
 
     OUTPUT = 'OUTPUT'
-    SERVERIP = 'SERVERIP'
-    PORT = 'PORT'
-    BDNAME = 'BDNAME'
-    USER = 'USER'
-    PASSWORD = 'PASSWORD'
+    FOLDER = 'FOLDER'
 
     def initAlgorithm(self, config):
         """
@@ -69,37 +64,10 @@ class CreateDatabase(QgsProcessingAlgorithm):
         with some other properties.
         """
         self.addParameter(
-            QgsProcessingParameterString(
-                self.SERVERIP,
-                self.tr('Insert the machine\'s ip')
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PORT,
-                self.tr('Insert the port')
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.BDNAME,
-                self.tr('Insert the DB name'),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.USER,
-                self.tr('Insert the username'),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.PASSWORD,
-                self.tr('Insert the password'),
+            QgsProcessingParameterFile(
+                self.FOLDER,
+                self.tr('Insert Folder'),
+                behavior=QgsProcessingParameterFile.Folder
             )
         )
 
@@ -107,14 +75,9 @@ class CreateDatabase(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        server_ip = self.parameterAsString(parameters, self.SERVERIP, context)
-        port = self.parameterAsInt(parameters, self.PORT, context)
-        bdname = self.parameterAsString(parameters, self.BDNAME, context)
-        user = self.parameterAsString(parameters, self.USER, context)
-        password = self.parameterAsString(parameters, self.PASSWORD, context)
-
-        db = GeraBD(server_ip, port, bdname, user, password)
-        db.create()
+        folder = self.parameterAsFile(parameters, self.FOLDER, context)
+        criaPastas(folder)
+        zipaPPP(folder)
 
         # # Compute the number of steps to display within the progress bar and
         # # get features from source
@@ -148,7 +111,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '1- Create DB'
+        return '4- Before PPP'
 
     def displayName(self):
         """
@@ -184,4 +147,4 @@ class CreateDatabase(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return CreateDatabase()
+        return PrePPP()

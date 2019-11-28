@@ -148,11 +148,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-<<<<<<< HEAD
         return '1- Create DB'
-=======
-        return 'Create DB'
->>>>>>> 3d4af40a2e53c36b4768ee9206d89201b6941710
 
     def displayName(self):
         """

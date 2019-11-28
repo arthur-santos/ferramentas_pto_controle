@@ -28,6 +28,10 @@ import os
 import sys
 import csv
 import psycopg2
+import re
+import math
+import numpy as np
+import pyproj
 
 
 class AtualizaBD():
@@ -56,7 +60,30 @@ class AtualizaBD():
                             pontos.append(aux)
         return pontos
 
-    def atualiza(self, pontos):
+    def getCoordsFromRinex(self):
+        points = []
+        for root, dirs, files in os.walk(self.pasta):
+            for f in files:
+                if f.endswith('.csv'):
+                    with open(os.path.join(root, f)) as csv:
+                        csv_reader = csv.DictReader(csv)
+                        for row in csv_reader:
+                            aux = {}
+                            if "cod_ponto" in row:
+                                aux["cod_ponto"] = row["cod_ponto"]
+                            if "operador_levantamento" in row:
+                                aux["operador_levantamento"] = row["operador_levantamento"]
+                            if "data" in row:
+                                aux["data"] = row["data"]
+                            pontos.append(aux)
+                if re.search(r'.[0-9][0-9]o$', f):
+                    with open(os.path.join(root, f)) as rinex:
+                        lines = rinex.readlines()
+                        x, y, z = lines[8].strip().split(' ')[0:3]
+                        results = transform(x, y, z)
+                        insertPoints()
+
+    def insertPoints(self, pontos):
         rowcount = 0
         for ponto in pontos:
             if "cod_ponto" in ponto and "operador_levantamento" in ponto and "data" in ponto:
@@ -73,36 +100,45 @@ class AtualizaBD():
         self.conn.commit()
         return rowcount
 
+    def checkPoints(self):
+        self.cursor.execute(u"""
+        INSERT INTO controle.pto_controle_p (POINT, ...DATA)
+        VALUES ({0}, {1})
+        ON CONFLIT (POINT)
+        DO
+        UPDATE
+            SET medidor = %s, data_medicao = %s, tipo_situacao_id = 4
+            WHERE nome = %s AND (tipo_situacao_id = 1 OR tipo_situacao_id = 2 OR tipo_situacao_id = 3 OR tipo_situacao_id = 6);
+        """.format())
+        points = self.cursor.fetchall()
+        print(points)
 
-if __name__ == '__builtin__':
+    def upinsert(self):
+        cursor = self.conn.cursor()
+        cursor.execute(u"""
+        SELECT nome FROM controle.ponto_controle_p
+        """)
+        points = self.cursor.fetchall()
+        print(points)
 
-    from qgis.gui import QgsMessageBar
-    from qgis.core import QgsMessageLog
-    from qgis.utils import iface
-
-    try:
-        atualiza_db = AtualizaBD(
-            pasta, servidor, porta, nome_bd, usuario, senha)
-        pontos = atualiza_db.getPontosFromCSV()
-        atualiza_db.atualiza(pontos)
-        iface.messageBar().pushMessage(u'Situacao', "Banco de dados atualizado com sucesso",
-                                       level=QgsMessageBar.INFO, duration=20)
-    except Exception as e:
-        QgsMessageLog.logMessage(u"Erro: {0}".format(
-            e), tag="Atualiza banco de dados", level=QgsMessageLog.CRITICAL)
-        iface.messageBar().pushMessage(u'Situacao', "Erro na execução do script.",
-                                       level=QgsMessageBar.CRITICAL, duration=20)
-
+def transform (x, y, z):
+    ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
+    lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
+    return pyproj.transform(ecef, lla, x, y, z, radians=False)
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 6:
-        atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
-                                sys.argv[3], sys.argv[4],
-                                sys.argv[5], sys.argv[6])
+    atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
+                            sys.argv[3], sys.argv[4],
+                            sys.argv[5], sys.argv[6])
+    atualiza_db.getCoordsFromRinex()
+    # if len(sys.argv) >= 6:
+    #     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
+    #                             sys.argv[3], sys.argv[4],
+    #                             sys.argv[5], sys.argv[6])
 
-        pontos = atualiza_db.getPontosFromCSV()
-        total = atualiza_db.atualiza(pontos)
-        print(u'Foram atualizados {0} pontos de controle!'.format(total))
-    else:
-        print(u'Parametros incorretos!')
+    #     pontos = atualiza_db.getPontosFromCSV()
+    #     total = atualiza_db.atualiza(pontos)
+    #     print(u'Foram atualizados {0} pontos de controle!'.format(total))
+    # else:
+    #     print(u'Parametros incorretos!')
 

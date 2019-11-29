@@ -9,10 +9,11 @@ class MyWidgetWrapper(WidgetWrapper):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.placeholder = args[0]
 
     def createWidget(self):
         self._lineedit = QLineEdit()
         self._lineedit.setEchoMode(QLineEdit.Password)
-        # self._lineedit.setPlaceholderText('Teste')
+        if self.placeholder: self._lineedit.setPlaceholderText(self.placeholder)
         widget = self._lineedit
         return widget

@@ -34,7 +34,6 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterBoolean)
 from qgis.PyQt.QtCore import QCoreApplication
-from .wrapper import MyWidgetWrapper
 from .atualiza_bd import AtualizaBD
 
 
@@ -106,7 +105,7 @@ class RefreshBD(QgsProcessingAlgorithm):
                 self.tr('Insert the password'),
             )
         password.setMetadata({
-            'widget_wrapper': 'ferramentas_pto_controle.refreshBD.wrapper.MyWidgetWrapper'}
+            'widget_wrapper': 'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'}
         )
 
         self.addParameter(password)

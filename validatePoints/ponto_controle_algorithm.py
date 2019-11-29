@@ -36,8 +36,11 @@ from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterFileDestination)
+                       QgsProcessingParameterFileDestination,
+                       QgsProcessingParameterDefinition,
+                       QgsProcessingParameterType)
 from qgis.PyQt.QtCore import QCoreApplication
+import re
 from .valida_estrutura_pto_controle import EvaluateStructure
 
 
@@ -64,6 +67,7 @@ class PontoControleAlgorithm(QgsProcessingAlgorithm):
     OPERATORS = 'OPERATORS'
     DATE = 'DATE'
     FUSE = 'FUSE'
+    TEST = 'Teste'
     FILE_DST = 'FILE_DST'
 
     def initAlgorithm(self, config):
@@ -111,15 +115,11 @@ class PontoControleAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        # We add a feature sink in which to store our processed features (this
-        # usually takes the form of a newly created vector layer when the
-        # algorithm is run in QGIS).
-        # self.addParameter(
-        #     QgsProcessingParameterFeatureSink(
-        #         self.OUTPUT,
-        #         self.tr('Output layer')
-        #     )
-        # )
+        param = ValidationString(
+            self.TEST,
+            description = self.tr('Insert the output folder')
+        )
+        self.addParameter(param)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -147,28 +147,6 @@ class PontoControleAlgorithm(QgsProcessingAlgorithm):
             erros_text = "\n".join(results)
             f.write(erros_text)
 
-        # # Compute the number of steps to display within the progress bar and
-        # # get features from source
-        # total=100.0 / source.featureCount() if source.featureCount() else 0
-        # features=source.getFeatures()
-
-        # for current, feature in enumerate(features):
-        #     # Stop the algorithm if cancel button has been clicked
-        #     if feedback.isCanceled():
-        #         break
-
-        #     # Add a feature in the sink
-        #     sink.addFeature(feature, QgsFeatureSink.FastInsert)
-
-        #     # Update the progress bar
-        #     feedback.setProgress(int(current * total))
-
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
         return {self.OUTPUT: results}
 
     def name(self):
@@ -216,3 +194,13 @@ class PontoControleAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return PontoControleAlgorithm()
+
+class ValidationString(QgsProcessingParameterString):
+
+    def __init__(self, name, description=''):
+        super().__init__(name, description)
+
+
+    def checkValueIsAcceptable(self, value, context=None):
+        if re.match():
+            return value

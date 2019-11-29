@@ -57,31 +57,20 @@ class AtualizaBD():
                                 aux["operador_levantamento"] = row["operador_levantamento"]
                             if "data" in row:
                                 aux["data"] = row["data"]
+                            aux['lat'], aux['lon'], aux['alt'] = self.getCoordsFromRinex(row['cod_ponto'])
                             pontos.append(aux)
-        return pontos
+        return(pontos)
 
-    def getCoordsFromRinex(self):
+    def getCoordsFromRinex(self, point):
         points = []
         for root, dirs, files in os.walk(self.pasta):
             for f in files:
-                if f.endswith('.csv'):
-                    with open(os.path.join(root, f)) as csv:
-                        csv_reader = csv.DictReader(csv)
-                        for row in csv_reader:
-                            aux = {}
-                            if "cod_ponto" in row:
-                                aux["cod_ponto"] = row["cod_ponto"]
-                            if "operador_levantamento" in row:
-                                aux["operador_levantamento"] = row["operador_levantamento"]
-                            if "data" in row:
-                                aux["data"] = row["data"]
-                            pontos.append(aux)
-                if re.search(r'.[0-9][0-9]o$', f):
+                if re.search(r'{}.[0-9][0-9]o$'.format(point), f):
+                    print('{}, {}, {}'.format(root, dirs, f))
                     with open(os.path.join(root, f)) as rinex:
                         lines = rinex.readlines()
                         x, y, z = lines[8].strip().split(' ')[0:3]
-                        results = transform(x, y, z)
-                        insertPoints()
+                        return transform(x, y, z)
 
     def insertPoints(self, pontos):
         rowcount = 0
@@ -130,7 +119,7 @@ if __name__ == '__main__':
     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
                             sys.argv[3], sys.argv[4],
                             sys.argv[5], sys.argv[6])
-    atualiza_db.getCoordsFromRinex()
+    atualiza_db.getPontosFromCSV()
     # if len(sys.argv) >= 6:
     #     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
     #                             sys.argv[3], sys.argv[4],

@@ -16,21 +16,12 @@ reference:
  *                                                                         *
  ***************************************************************************/
 """
-##DSG=group
-##servidor=string
-##porta=string
-##nome_bd=string
-##usuario=string
-##senha=string
-##pasta=folder
 
 import os
 import sys
 import csv
 import psycopg2
 import re
-import math
-import numpy as np
 import pyproj
 
 
@@ -57,20 +48,38 @@ class AtualizaBD():
                                 aux["operador_levantamento"] = row["operador_levantamento"]
                             if "data" in row:
                                 aux["data"] = row["data"]
-                            aux['lat'], aux['lon'], aux['alt'] = self.getCoordsFromRinex(row['cod_ponto'])
                             pontos.append(aux)
-        return(pontos)
+        return pontos
 
-    def getCoordsFromRinex(self, point):
+    def getCoordsFromRinex(self):
         points = []
+        coords = []
         for root, dirs, files in os.walk(self.pasta):
             for f in files:
-                if re.search(r'{}.[0-9][0-9]o$'.format(point), f):
-                    print('{}, {}, {}'.format(root, dirs, f))
+                if f.endswith('.csv'):
+                    with open(os.path.join(root, f)) as csv:
+                        csv_reader = csv.DictReader(csv)
+                        for row in csv_reader:
+                            aux = {}
+                            if "cod_ponto" in row:
+                                aux["cod_ponto"] = row["cod_ponto"]
+                            if "operador_levantamento" in row:
+                                aux["operador_levantamento"] = row["operador_levantamento"]
+                            if "data" in row:
+                                aux["data"] = row["data"]
+                            points.append(aux)
+                if re.search(r'.[0-9][0-9]o$', f):
                     with open(os.path.join(root, f)) as rinex:
                         lines = rinex.readlines()
+                        point = lines[4].split(' ')[0]
                         x, y, z = lines[8].strip().split(' ')[0:3]
-                        return transform(x, y, z)
+                        results = transform(x, y, z)
+                        aux = {}
+                        aux['nome'] = point
+                        aux['lat'] = results[0]
+                        aux['lon'] = results[1]
+                        coords.append(aux)
+                        
 
     def insertPoints(self, pontos):
         rowcount = 0
@@ -119,7 +128,7 @@ if __name__ == '__main__':
     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
                             sys.argv[3], sys.argv[4],
                             sys.argv[5], sys.argv[6])
-    atualiza_db.getPontosFromCSV()
+    atualiza_db.getCoordsFromRinex()
     # if len(sys.argv) >= 6:
     #     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
     #                             sys.argv[3], sys.argv[4],

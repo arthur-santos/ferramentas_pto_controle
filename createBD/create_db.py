@@ -72,7 +72,9 @@ class CreateDatabase(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PORT,
-                self.tr('Insert the port')
+                self.tr('Insert the port'),
+                minValue=0,
+                maxValue=9999
             )
         )
 
@@ -91,12 +93,12 @@ class CreateDatabase(QgsProcessingAlgorithm):
         )
 
         password = QgsProcessingParameterString(
-                self.PASSWORD,
-                self.tr('Insert the password'),
-            )
-        password.setMetadata({
-            'widget_wrapper': 'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'}
+            self.PASSWORD,
+            self.tr('Insert the password'),
         )
+        password.setMetadata({
+            'widget_wrapper':
+            'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'})
 
         self.addParameter(password)
 
@@ -112,7 +114,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
 
         db = GeraBD(server_ip, port, bdname, user, password)
         db.create()
-        
+
         return {self.OUTPUT: ''}
 
     def name(self):

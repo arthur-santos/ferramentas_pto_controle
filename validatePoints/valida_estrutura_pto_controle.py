@@ -496,34 +496,6 @@ class EvaluateStructure():
                 erros.append(u"{0}: Não foi encontrado informações do RINEX compatíveis com o ponto {1}.".format(pasta, self.csv_data[key]["cod_ponto"]))                
         return erros
 
-if __name__ == '__builtin__':
-
-    from qgis.gui import QgsMessageBar
-    from qgis.core import QgsMessageLog
-    from qgis.utils import iface
-    erros = EvaluateStructure(pasta, medidores, data, fuso_horario, ignora_processamento).evaluate()
-
-    # log erros
-    QgsMessageLog.logMessage(
-        u"Nova execução:", tag="Verifica estrutura", level=QgsMessageLog.INFO)
-    for erro in erros:
-        QgsMessageLog.logMessage(u"{0}".format(
-            erro), tag="Verifica estrutura", level=QgsMessageLog.INFO)
-
-    #save in file
-    try:
-        with open(log, 'w') as f:
-            erros_text = "\n".join(erros).encode('utf-8')
-            f.write(erros_text)
-            iface.messageBar().pushMessage(u'Situacao', "Arquivo de log gerado em {0}".format(
-                log), level=QgsMessageBar.INFO, duration=20)
-    except Exception as e:
-        QgsMessageLog.logMessage(u"Erro: {0}".format(
-            e), tag="Verifica estrutura", level=QgsMessageLog.CRITICAL)
-        iface.messageBar().pushMessage(u'Situacao', "Erro na execução do script.",
-                                       level=QgsMessageBar.CRITICAL, duration=20)
-
-
 if __name__ == '__main__':
     if len(sys.argv) == 7:
         erros = EvaluateStructure(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]).evaluate()

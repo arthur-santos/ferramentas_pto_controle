@@ -16,17 +16,16 @@ reference:
  *                                                                         *
  ***************************************************************************/
 """
-##DSG=group
-##pasta_dados=folder
 
-import os 
-from re import search, compile
+import os
+import re
 import zipfile
 import sys
 
+
 def criaPastas(pasta):
-    pto_regex =  compile("^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$")
-    date_regex =  compile("\d{4}-\d{2}-\d{2}")
+    pto_regex = compile(r"^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$")
+    date_regex = compile(r"\d{4}-\d{2}-\d{2}")
     for root, dirs, files in os.walk(pasta):
         if pto_regex.match(root.split('\\')[-1]):
             if not "6_Processamento_PPP" in dirs:
@@ -36,21 +35,24 @@ def criaPastas(pasta):
         if date_regex.match(root.split('\\')[-1].split("_")[-1]) and root.split('\\')[-1].split("_")[-1] == root.split('\\')[-2]:
             nome_pasta = "_Processamento_TBC_{0}".format(root.split('\\')[-1])
             if not nome_pasta in dirs:
-                os.mkdir(os.path.join(root, nome_pasta))        
+                os.mkdir(os.path.join(root, nome_pasta))
         if date_regex.match(root.split('\\')[-1]):
             if not "_Processamento_RBMC" in dirs:
-                os.mkdir(os.path.join(root, "_Processamento_RBMC"))            
+                os.mkdir(os.path.join(root, "_Processamento_RBMC"))
             if not "_Revisao" in dirs:
-                os.mkdir(os.path.join(root, "_Revisao"))         
+                os.mkdir(os.path.join(root, "_Revisao"))
+
 
 def zipaPPP(pasta):
     for root, dirs, files in os.walk(pasta):
         if root.split('\\')[-1] == "2_RINEX":
             pto = root.split('\\')[-2]
             if (pto + ".18n") in files and (pto + ".18o") in files and not (pto + ".zip") in files:
-                zf = zipfile.ZipFile(os.path.join(root, pto + ".zip"), "w", zipfile.ZIP_DEFLATED)
+                zf = zipfile.ZipFile(os.path.join(
+                    root, pto + ".zip"), "w", zipfile.ZIP_DEFLATED)
                 zf.write(os.path.join(root, pto + ".18n"), pto + ".18n")
                 zf.write(os.path.join(root, pto + ".18o"), pto + ".18o")
+
 
 if __name__ == '__main__':
     if len(sys.argv) >= 2:

@@ -101,12 +101,12 @@ class RefreshBD(QgsProcessingAlgorithm):
         )
 
         password = QgsProcessingParameterString(
-                self.PASSWORD,
-                self.tr('Insert the password'),
-            )
-        password.setMetadata({
-            'widget_wrapper': 'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'}
+            self.PASSWORD,
+            self.tr('Insert the password'),
         )
+        password.setMetadata({
+            'widget_wrapper':
+            'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'})
 
         self.addParameter(password)
 

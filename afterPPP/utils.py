@@ -16,15 +16,13 @@ reference:
  *                                                                         *
  ***************************************************************************/
 """
-##DSG=group
-##pasta_dados=folder
-##pasta_ppp=folder
 
-import os 
+import os
 from re import search
 import zipfile
 import sys
 import shutil
+
 
 def extraiZip(zip, estrutura):
     zip_ref = zipfile.ZipFile(zip, 'r')
@@ -34,29 +32,34 @@ def extraiZip(zip, estrutura):
         source = os.path.join(estrutura, os.listdir(estrutura)[0])
         if os.path.isdir(source):
             for f in os.listdir(source):
-                shutil.move(os.path.join(source,f), estrutura)
+                shutil.move(os.path.join(source, f), estrutura)
             shutil.rmtree(source)
+
 
 def organizePPP(estrutura_pasta, pasta_ppp):
     pto_regex = "^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$"
-    zipfiles = {f.split("_")[1][:-4]: os.path.join(pasta_ppp, f) for f in os.listdir(pasta_ppp) if os.path.isfile(os.path.join(pasta_ppp, f)) and f.endswith('.zip') and len(f.split("_")) == 4 and search(pto_regex,f.split("_")[1][:-4])}
+    zipfiles = {f.split("_")[1][:-4]: os.path.join(pasta_ppp, f) for f in os.listdir(pasta_ppp) if os.path.isfile(
+        os.path.join(pasta_ppp, f)) and f.endswith('.zip') and len(f.split("_")) == 4 and search(pto_regex, f.split("_")[1][:-4])}
     ptos_estrutura = {}
     for root, dirs, files in os.walk(estrutura_pasta):
         if search(pto_regex, root.split('\\')[-1]):
             if "6_Processamento_PPP" in dirs:
-                ptos_estrutura[root.split('\\')[-1]] = os.path.join(root,"6_Processamento_PPP")
+                ptos_estrutura[root.split(
+                    '\\')[-1]] = os.path.join(root, "6_Processamento_PPP")
             else:
-                print ("O padrao de pasta para o ponto {0} esta incorreto (nao possui 6_Processamento_PPP)".format(root.split('\\')[-1]))
-    
+                print("O padrao de pasta para o ponto {0} esta incorreto (nao possui 6_Processamento_PPP)".format(
+                    root.split('\\')[-1]))
+
     for zip_pto in zipfiles:
         if zip_pto in ptos_estrutura:
             extraiZip(zipfiles[zip_pto], ptos_estrutura[zip_pto])
-                            
-    print ("Pontos nao encontrados na estrutura:")
-    print (repr(list(set(zipfiles.keys()) - set(ptos_estrutura.keys()))))
-    print ("------------------------------------")
-    print ("Pontos que nao possuem zip:")
-    print (repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys()))))
+
+    print("Pontos nao encontrados na estrutura:")
+    print(repr(list(set(zipfiles.keys()) - set(ptos_estrutura.keys()))))
+    print("------------------------------------")
+    print("Pontos que nao possuem zip:")
+    print(repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys()))))
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:

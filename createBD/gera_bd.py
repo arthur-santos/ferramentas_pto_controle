@@ -23,9 +23,8 @@ reference:
 ##usuario=string
 ##senha=string
 
-import psycopg2
 from pathlib import Path
-import os
+import psycopg2
 
 class GeraBD():
     def __init__(self, servidor, porta, nome_bd, usuario, senha):

@@ -40,10 +40,10 @@ from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType)
 from qgis.PyQt.QtCore import QCoreApplication
-from .valida_estrutura_pto_controle import EvaluateStructure
+from .evaluateStructure import EvaluateStructure
 
 
-class PontoControleAlgorithm(QgsProcessingAlgorithm):
+class ValidatePoints(QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -164,13 +164,23 @@ class PontoControleAlgorithm(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Insert description here!')
+        return self.tr('''
+        Esta ferramenta checará a consistência dos arquivos gerados pela medição e sua correta disposição nas pastas.
+        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
+        Os parâmetros necessários são:
+        - Pasta com a estrutura de pontos de controle
+        - IP da máquina (se trabalhando localmente utilizar localhost)
+        - Porta (geralmente 5432 para PostgreSQL)
+        - Nome do banco de gerência dos pontos de controle
+        - Usuário do PostgreSQL
+        - Senha do PostgreSQL
+        ''')
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return PontoControleAlgorithm()
+        return ValidatePoints()
 
 
 class ValidationString(QgsProcessingParameterString):

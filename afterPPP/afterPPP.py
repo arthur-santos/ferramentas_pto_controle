@@ -121,7 +121,13 @@ class AfterPPP(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Insert description here!')
+        return self.tr('''
+        Esta ferramenta descompacta os arquivos PPP no formato zip e distribui os arquivos na estrutura padrão de pastas de ponto de controle.
+        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
+        Os parâmetros necessários são:
+        - Pasta com a estrutura de pontos de controle
+        - Pasta com os arquivos PPP no formato zip
+        ''')
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

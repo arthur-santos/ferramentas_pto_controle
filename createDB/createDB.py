@@ -34,7 +34,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
-from .gera_bd import GeraBD
+from .handleCreateDB import HandleCreateDB
 
 
 class CreateDatabase(QgsProcessingAlgorithm):
@@ -112,7 +112,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
         user = self.parameterAsString(parameters, self.USER, context)
         password = self.parameterAsString(parameters, self.PASSWORD, context)
 
-        db = GeraBD(server_ip, port, bdname, user, password)
+        db = HandleCreateDB(server_ip, port, bdname, user, password)
         db.create()
 
         return {self.OUTPUT: ''}
@@ -155,7 +155,16 @@ class CreateDatabase(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Insert description here!')
+        return self.tr('''
+        Esta ferramenta irá criar o banco de dados de pontos de controle necessário para a gerência do projeto.
+        Os parâmetros necessários são:
+        - IP da máquina (se trabalhando localmente utilizar localhost)
+        - Porta (geralmente 5432 para PostgreSQL)
+        - Nome do banco a ser gerado
+        - Usuário do PostgreSQL
+        - Senha do PostgreSQL
+        Caso já exista um banco de dados com o mesmo nome a ferramenta não irá sobrescrevê-lo.''')
+        
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

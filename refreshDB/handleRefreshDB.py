@@ -25,7 +25,7 @@ import re
 import pyproj
 
 
-class AtualizaBD():
+class HandleRefreshDB():
     def __init__(self, pasta, servidor, porta, nome_bd, usuario, senha):
         self.pasta = pasta
         conn_string = "host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(

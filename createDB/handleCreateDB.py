@@ -16,17 +16,11 @@ reference:
  *                                                                         *
  ***************************************************************************/
 """
-##DSG=group
-##servidor=string
-##porta=string
-##nome_bd=string
-##usuario=string
-##senha=string
 
 from pathlib import Path
 import psycopg2
 
-class GeraBD():
+class HandleCreateDB():
     def __init__(self, servidor, porta, nome_bd, usuario, senha):
         self.server = servidor
         self.port = porta

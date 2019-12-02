@@ -114,7 +114,12 @@ class PrePPP(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Insert description here!')
+        return self.tr('''
+        Esta ferramenta cria as pastas 6_Processamento_PPP e 7_Processamento_TBC_RBMC na estrutura de pastas e compacta os arquivos RINEX no formato zip.
+        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
+        Os parâmetros necessários são:
+        - Pasta com a estrutura de pontos de controle
+        ''')
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

@@ -37,7 +37,7 @@ class HandleCreateDB():
         self.cursor.execute(u"""
                     CREATE DATABASE {}
                 """.format(self.bdname))
-        sqlPath = Path(__file__).parent / 'sql_db.sql'
+        sqlPath = Path(__file__).parent / 'new_db.sql'
         new_conn_str = "host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(
             self.server, self.port, self.bdname, self.user, self.password)
         new_conn = psycopg2.connect(new_conn_str)

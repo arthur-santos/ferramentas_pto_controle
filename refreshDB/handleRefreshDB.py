@@ -33,85 +33,62 @@ class HandleRefreshDB():
         self.conn = psycopg2.connect(conn_string)
         self.cursor = self.conn.cursor()
 
-    def getPontosFromCSV(self):
-        pontos = []
+    def getPointsFromCSV(self):
+        ''' 
+        Gets every row from CSV to prepare the commit on database 
+        '''
+        points = []
         for root, dirs, files in os.walk(self.pasta):
             for f in files:
                 if f.endswith(".csv"):
                     with open(os.path.join(root, f)) as csv_file:
                         csv_reader = csv.DictReader(csv_file)
                         for row in csv_reader:
-                            aux = {}
-                            if "cod_ponto" in row:
-                                aux["cod_ponto"] = row["cod_ponto"]
-                            if "operador_levantamento" in row:
-                                aux["operador_levantamento"] = row["operador_levantamento"]
-                            if "data" in row:
-                                aux["data"] = row["data"]
-                            pontos.append(aux)
-        return pontos
+                            points.append(row)
+        return points
 
-    def getCoordsFromRinex(self):
-        points = []
-        coords = []
+    def getCoordsFromRinex(self, points):
+        '''
+        Reads RINEX and gets coordinates
+        '''
         for root, dirs, files in os.walk(self.pasta):
             for f in files:
-                if f.endswith('.csv'):
-                    with open(os.path.join(root, f)) as csv:
-                        csv_reader = csv.DictReader(csv)
-                        for row in csv_reader:
-                            aux = {}
-                            if "cod_ponto" in row:
-                                aux["cod_ponto"] = row["cod_ponto"]
-                            if "operador_levantamento" in row:
-                                aux["operador_levantamento"] = row["operador_levantamento"]
-                            if "data" in row:
-                                aux["data"] = row["data"]
-                            points.append(aux)
                 if re.search(r'.[0-9][0-9]o$', f):
                     with open(os.path.join(root, f)) as rinex:
                         lines = rinex.readlines()
-                        point = lines[4].split(' ')[0]
+                        point_name = lines[4].split(' ')[0]
                         x, y, z = lines[8].strip().split(' ')[0:3]
                         results = transform(x, y, z)
-                        aux = {}
-                        aux['nome'] = point
-                        aux['lat'] = results[0]
-                        aux['lon'] = results[1]
-                        coords.append(aux)
-                        
+                        for point in points:
+                            if point['cod_ponto'] == point_name:
+                                point['lat'] = results[0]
+                                point['lon'] = results[1]
+        return points
 
-    def insertPoints(self, pontos):
-        rowcount = 0
-        for ponto in pontos:
-            if "cod_ponto" in ponto and "operador_levantamento" in ponto and "data" in ponto:
-                self.cursor.execute(u"""
-                    UPDATE controle.ponto_controle_p
-                    SET medidor = %s, data_medicao = %s, tipo_situacao_id = 4
-                    WHERE nome = %s AND (tipo_situacao_id = 1 OR tipo_situacao_id = 2 OR tipo_situacao_id = 3 OR tipo_situacao_id = 6);
-                """, (ponto["operador_levantamento"], ponto["data"], ponto["cod_ponto"]))
-                if self.cursor.rowcount == 0:
-                    print('O ponto {0} nao esta presente no banco de dados ou teve medição duplicada.'.format(
-                        ponto["cod_ponto"]))
-                else:
-                    rowcount += self.cursor.rowcount
+    def upsert(self, points):
+        for point in points:
+            str_key = ''
+            str_value = ''
+            lista = list(point.items())
+            print(lista[0])
+            for key, value in lista:
+                str_key += '{},'.format(key)
+                str_value += "'{}',".format(value)
+                print(str_key)
+                print(str_value)
+            self.cursor.execute(u"""
+            INSERT INTO bpc.ponto_controle_p ({keys}, geom)
+            VALUES ({values}, ST_GeomFromText('POINT({lat} {lon})', 4674))
+            ON CONFLICT (cod_ponto)
+            DO
+            UPDATE
+                SET medidor = '{operador_levantamento}', data_visita = '{data}', tipo_situacao = 2
+                WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 3);
+            """.format(keys=str_key[:-1], values=str_value[:-1], **point))
         self.conn.commit()
-        return rowcount
 
-    def checkPoints(self):
-        self.cursor.execute(u"""
-        INSERT INTO controle.pto_controle_p (POINT, ...DATA)
-        VALUES ({0}, {1})
-        ON CONFLIT (POINT)
-        DO
-        UPDATE
-            SET medidor = %s, data_medicao = %s, tipo_situacao_id = 4
-            WHERE nome = %s AND (tipo_situacao_id = 1 OR tipo_situacao_id = 2 OR tipo_situacao_id = 3 OR tipo_situacao_id = 6);
-        """.format())
-        points = self.cursor.fetchall()
-        print(points)
 
-    def upinsert(self):
+    def fetch(self):
         cursor = self.conn.cursor()
         cursor.execute(u"""
         SELECT nome FROM controle.ponto_controle_p
@@ -119,24 +96,17 @@ class HandleRefreshDB():
         points = self.cursor.fetchall()
         print(points)
 
-def transform (x, y, z):
+
+def transform(x, y, z):
     ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
     lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
     return pyproj.transform(ecef, lla, x, y, z, radians=False)
 
+
 if __name__ == '__main__':
-    atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
-                            sys.argv[3], sys.argv[4],
-                            sys.argv[5], sys.argv[6])
-    atualiza_db.getCoordsFromRinex()
-    # if len(sys.argv) >= 6:
-    #     atualiza_db = AtualizaBD(sys.argv[1], sys.argv[2],
-    #                             sys.argv[3], sys.argv[4],
-    #                             sys.argv[5], sys.argv[6])
-
-    #     pontos = atualiza_db.getPontosFromCSV()
-    #     total = atualiza_db.atualiza(pontos)
-    #     print(u'Foram atualizados {0} pontos de controle!'.format(total))
-    # else:
-    #     print(u'Parametros incorretos!')
-
+    atualiza_db = HandleRefreshDB(sys.argv[1], sys.argv[2],
+                                  sys.argv[3], sys.argv[4],
+                                  sys.argv[5], sys.argv[6])
+    points = atualiza_db.getPointsFromCSV()
+    points2 = atualiza_db.getCoordsFromRinex(points)
+    atualiza_db.upsert(points2)

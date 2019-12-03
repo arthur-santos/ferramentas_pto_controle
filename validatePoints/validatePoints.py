@@ -72,7 +72,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insert Folder'),
+                self.tr('Insert a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -80,21 +80,21 @@ class ValidatePoints(QgsProcessingAlgorithm):
         param = ValidationString(
             self.OPERATORS,
             description=self.tr(
-                'Insert the operators\'s names, separated by ;')
+                'Insira o nome dos operadores separados por ;')
         )
         self.addParameter(param)
 
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DATE,
-                self.tr('Insert the date')
-            )
+        date = ValidationDate(
+            self.DATE,
+            description=self.tr(
+                'Insira a data no formato YYYY-MM-DD;')
         )
+        self.addParameter(date)
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FUSE,
-                self.tr('Insert the fuse'),
+                self.tr('Insira o fuso horário'),
                 defaultValue=-3
             )
         )
@@ -102,7 +102,9 @@ class ValidatePoints(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFileDestination(
                 self.FILE_DST,
-                self.tr('Insert the output folder')
+                self.tr('Insira o arquivo onde será salvo o relatório de erros'),
+                fileFilter='.txt'
+
             )
         )
 
@@ -169,11 +171,10 @@ class ValidatePoints(QgsProcessingAlgorithm):
         Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
         Os parâmetros necessários são:
         - Pasta com a estrutura de pontos de controle
-        - IP da máquina (se trabalhando localmente utilizar localhost)
-        - Porta (geralmente 5432 para PostgreSQL)
-        - Nome do banco de gerência dos pontos de controle
-        - Usuário do PostgreSQL
-        - Senha do PostgreSQL
+        - Nome dos medidores separados por ; (não inserir espaços)
+        - Data (no formato YYYY-MM-DD. Exemplo: 2019-08-30)
+        - Fuso horário da região (geralmente -3)
+        - O arquivo no qual será escrito os problemas de validação
         ''')
 
     def tr(self, string):
@@ -193,4 +194,16 @@ class ValidationString(QgsProcessingParameterString):
 
     def checkValueIsAcceptable(self, value, context=None):
         if re.match(r'([a-z]+)(?:;|$)', value):
+            return True
+
+class ValidationDate(QgsProcessingParameterString):
+    '''
+    Auxiliary class for pre validation on measurer's names.
+    '''
+    #__init__ not necessary
+    def __init__(self, name, description=''):
+        super().__init__(name, description)
+
+    def checkValueIsAcceptable(self, value, context=None):
+        if re.match(r'20\d\d-[01][1-9]-[0-3]\d', value):
             return True

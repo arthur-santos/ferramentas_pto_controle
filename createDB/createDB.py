@@ -115,7 +115,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
         db = HandleCreateDB(server_ip, port, bdname, user, password)
         db.create()
 
-        return {self.OUTPUT: ''}
+        return {self.OUTPUT: 'Processamento concluído'}
 
     def name(self):
         """

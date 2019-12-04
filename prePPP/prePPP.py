@@ -61,7 +61,7 @@ class PrePPP(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insert Folder'),
+                self.tr('Insira a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -74,7 +74,7 @@ class PrePPP(QgsProcessingAlgorithm):
         criaPastas(folder)
         zipaPPP(folder)
 
-        return {self.OUTPUT: ''}
+        return {self.OUTPUT: 'Processamento concluído'}
 
     def name(self):
         """
@@ -84,7 +84,7 @@ class PrePPP(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '4- Before PPP'
+        return '4- Preparar para PPP'
 
     def displayName(self):
         """

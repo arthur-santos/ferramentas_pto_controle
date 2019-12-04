@@ -37,6 +37,7 @@ from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterFileDestination,
+                       QgsProcessingParameterFileBoolean,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType)
 from qgis.PyQt.QtCore import QCoreApplication
@@ -61,6 +62,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
     OPERATORS = 'OPERATORS'
     DATE = 'DATE'
     FUSE = 'FUSE'
+    IGN_PROC = 'IGN_PROC'
     FILE_DST = 'FILE_DST'
 
     def initAlgorithm(self, config):
@@ -72,7 +74,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insert a pasta'),
+                self.tr('Insira a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -102,9 +104,16 @@ class ValidatePoints(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFileDestination(
                 self.FILE_DST,
-                self.tr('Insira o arquivo onde será salvo o relatório de erros'),
+                self.tr('Insira o caminho do relatório de erros'),
                 fileFilter='.txt'
+            )
+        )
 
+        self.addParameter(
+            QgsProcessingParameterFileBoolean(
+                self.IGN_PROC,
+                self.tr('Ignorar as pastas e arquivos de processamento?'),
+                defaultValue=False
             )
         )
 
@@ -116,11 +125,12 @@ class ValidatePoints(QgsProcessingAlgorithm):
         operators = self.parameterAsString(parameters, self.OPERATORS, context)
         date = self.parameterAsString(parameters, self.DATE, context)
         fuse = self.parameterAsInt(parameters, self.OPERATORS, context)
+        ign_proc = self.parameterAsBoolean(parameters, self.IGN_PROC, context)
         file_dst = self.parameterAsFileOutput(
             parameters, self.FILE_DST, context)
 
         evaluate = EvaluateStructure(
-            folder, operators, date, fuse, ignora_processamento=True)
+            folder, operators, date, fuse, ign_proc)
         results = evaluate.evaluate()
         with open(file_dst, 'w') as f:
             erros_text = "\n".join(results)
@@ -136,7 +146,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '2- Data Validation'
+        return '2- Validação da estrutura'
 
     def displayName(self):
         """

@@ -24,7 +24,7 @@ import sys
 
 
 def criaPastas(pasta):
-    pto_regex = compile(r"^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$")
+    pto_regex = compile(r"^([A-Z]{2})-(HV|Base)-[1-9]+[0-9]*$") # todo: define new regex
     date_regex = compile(r"\d{4}-\d{2}-\d{2}")
     for root, dirs, files in os.walk(pasta):
         if pto_regex.match(root.split('\\')[-1]):

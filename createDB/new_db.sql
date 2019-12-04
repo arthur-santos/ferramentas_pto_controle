@@ -235,7 +235,7 @@ CREATE TABLE bpc.ponto_controle_p(
   latitude REAL, --graus decimais
   longitude REAL, --graus decimais
   altitude_ortometrica REAL, --metros
-  altitude_geometria REAL,  --metros
+  altitude_geometrica REAL,  --metros
   sistema_geodesico SMALLINT NOT NULL REFERENCES  dominios.sistema_geodesico(code) DEFAULT 9999,
   outra_ref_plan VARCHAR(255),
   referencial_altim SMALLINT NOT NULL REFERENCES  dominios.referencial_altim(code) DEFAULT 9999,

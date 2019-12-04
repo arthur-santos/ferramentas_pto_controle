@@ -45,7 +45,7 @@ class HandleRefreshDB():
                         csv_reader = csv.DictReader(csv_file)
                         for row in csv_reader:
                             points.append(row)
-        return points
+        return createTimeStamp(points)
 
     def getCoordsFromRinex(self, points):
         '''
@@ -61,8 +61,8 @@ class HandleRefreshDB():
                         results = transform(x, y, z)
                         for point in points:
                             if point['cod_ponto'] == point_name:
-                                point['lat'] = results[0]
-                                point['lon'] = results[1]
+                                point['latitude'], point['longitude'], point['altitude_ortometrica'] = results
+                                point['altitude_geometria'] = point['altitude_ortometrica']
         return points
 
     def upsert(self, points):
@@ -74,15 +74,13 @@ class HandleRefreshDB():
             for key, value in lista:
                 str_key += '{},'.format(key)
                 str_value += "'{}',".format(value)
-                print(str_key)
-                print(str_value)
             self.cursor.execute(u"""
             INSERT INTO bpc.ponto_controle_p ({keys}, geom)
-            VALUES ({values}, ST_GeomFromText('POINT({lat} {lon})', 4674))
+            VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
             ON CONFLICT (cod_ponto)
             DO
             UPDATE
-                SET medidor = '{operador_levantamento}', data_visita = '{data}', tipo_situacao = 2
+                SET medidor = '{medidor}', tipo_situacao = 2
                 WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 3);
             """.format(keys=str_key[:-1], values=str_value[:-1], **point))
         self.conn.commit()
@@ -96,12 +94,16 @@ class HandleRefreshDB():
         points = self.cursor.fetchall()
         print(points)
 
+def createTimeStamp(points):
+    for point in points:
+        point['inicio_rastreio'] = '{} {} {}'.format(point['data_visita'], point['inicio_rastreio'], -3)
+        point['fim_rastreio'] = '{} {} {}'.format(point['data_visita'], point['fim_rastreio'], -3)
+    return points
 
 def transform(x, y, z):
     ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
     lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
     return pyproj.transform(ecef, lla, x, y, z, radians=False)
-
 
 if __name__ == '__main__':
     atualiza_db = HandleRefreshDB(sys.argv[1], sys.argv[2],

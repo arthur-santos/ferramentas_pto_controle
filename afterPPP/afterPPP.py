@@ -62,14 +62,15 @@ class AfterPPP(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDERIN,
-                self.tr('Insert the input folder'),
+                self.tr('Insira a pasta da estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDEROUT,
-                self.tr('Insert the output folder'),
+                self.tr('Insira a pasta dos arquivos PPP'),
+                behavior=QgsProcessingParameterFile.Folder
             )
         )
 
@@ -81,7 +82,7 @@ class AfterPPP(QgsProcessingAlgorithm):
         folder_out = self.parameterAsFile(parameters, self.FOLDEROUT, context)
         organizePPP(folder_in, folder_out)
 
-        return {self.OUTPUT: ''}
+        return {self.OUTPUT: 'Processamento concluído'}
 
     def name(self):
         """
@@ -123,7 +124,6 @@ class AfterPPP(QgsProcessingAlgorithm):
         """
         return self.tr('''
         Esta ferramenta descompacta os arquivos PPP no formato zip e distribui os arquivos na estrutura padrão de pastas de ponto de controle.
-        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
         Os parâmetros necessários são:
         - Pasta com a estrutura de pontos de controle
         - Pasta com os arquivos PPP no formato zip

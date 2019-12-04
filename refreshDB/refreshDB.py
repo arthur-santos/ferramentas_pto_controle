@@ -67,7 +67,7 @@ class RefreshDB(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insert Folder'),
+                self.tr('Insira a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -75,34 +75,34 @@ class RefreshDB(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.SERVERIP,
-                self.tr('Insert the machine\'s ip')
+                self.tr('Insira o IP do computador')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PORT,
-                self.tr('Insert the port')
+                self.tr('Insira a porta')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
                 self.BDNAME,
-                self.tr('Insert the DB name'),
+                self.tr('Insira o nome do banco de dados'),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
                 self.USER,
-                self.tr('Insert the username'),
+                self.tr('Insira o usuário do PostgreSQL'),
             )
         )
 
         password = QgsProcessingParameterString(
             self.PASSWORD,
-            self.tr('Insert the password'),
+            self.tr('Insira a senha do PostgreSQL'),
         )
         password.setMetadata({
             'widget_wrapper':
@@ -135,7 +135,7 @@ class RefreshDB(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '3- Refresh DB'
+        return '3- Atualizar banco de dados'
 
     def displayName(self):
         """

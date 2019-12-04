@@ -92,7 +92,7 @@ class AfterPPP(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '6- After PPP'
+        return '6- Procedimento pós PPP'
 
     def displayName(self):
         """

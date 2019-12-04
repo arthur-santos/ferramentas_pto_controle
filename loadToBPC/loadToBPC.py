@@ -29,10 +29,14 @@ __copyright__ = '(C) 2019 by 1CGEO/DSG'
 
 __revision__ = '$Format:%H$'
 
+import subprocess
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
-                       QgsProcessingParameterFile)
+                       QgsProcessingParameterFile,
+                       QgsProcessingParameterString)
 from qgis.PyQt.QtCore import QCoreApplication
+from processing.tools import postgis
+from .utils import *
 
 
 class LoadToBPC(QgsProcessingAlgorithm):
@@ -52,6 +56,8 @@ class LoadToBPC(QgsProcessingAlgorithm):
     OUTPUT = 'OUTPUT'
     FOLDERIN = 'FOLDERIN'
     FOLDEROUT = 'FOLDEROUT'
+    DATABASE = 'DATABASE'
+    DATABASE2 = 'DATABASE'
 
     def initAlgorithm(self, config):
         """
@@ -61,16 +67,25 @@ class LoadToBPC(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDERIN,
-                self.tr('Insert the input folder'),
+                self.tr('Insira a pasta com a estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDEROUT,
-                self.tr('Insert the output folder'),
+                self.tr('Insira a pasta na qual serão gerados os arquivos:'),
+                behavior=QgsProcessingParameterFile.Folder
             )
         )
+        db_param = QgsProcessingParameterString(
+            self.DATABASE,
+            self.tr('Selecione a conexão com o banco'))
+        db_param.setMetadata({
+            'widget_wrapper': {
+                'class': 'processing.gui.wrappers_postgis.ConnectionWidgetWrapper'}})
+        self.addParameter(db_param)
+
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -78,7 +93,15 @@ class LoadToBPC(QgsProcessingAlgorithm):
         """
         folder_in = self.parameterAsFile(parameters, self.FOLDERIN, context)
         folder_out = self.parameterAsFile(parameters, self.FOLDEROUT, context)
-        organizePPP(folder_in, folder_out)
+        connection = self.parameterAsString(parameters, self.DATABASE, context)
+
+        points = getPointsFromCSV(folder_in)
+        print(points)
+        # uri = postgis.uri_from_name(connection)
+        # db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(uri.database(), uri.host(), uri.port(), uri.username(), uri.password())
+
+        # process = 'ogr2ogr -f GPKG "{}\\geopkg.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p"'.format(folder_out, db_string)
+        # subprocess.run(process)
 
         # # Compute the number of steps to display within the progress bar and
         # # get features from source
@@ -112,7 +135,7 @@ class LoadToBPC(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '8- Load to BPC'
+        return '8- Preparar insumos para carregamento no BPC'
 
     def displayName(self):
         """
@@ -142,10 +165,11 @@ class LoadToBPC(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Insert description here!')
+        return self.tr('Esta ferramenta gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage o(s) arquivo(s) zipados')
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
         return LoadToBPC()
+

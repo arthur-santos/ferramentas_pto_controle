@@ -9,4 +9,5 @@ i18n/
 pylintrc
 pbtools.cfg
 Makefile
+testes.txt
 *.pyc

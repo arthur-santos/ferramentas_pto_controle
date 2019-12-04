@@ -37,7 +37,7 @@ from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterFileDestination,
-                       QgsProcessingParameterFileBoolean,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType)
 from qgis.PyQt.QtCore import QCoreApplication
@@ -110,7 +110,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFileBoolean(
+            QgsProcessingParameterBoolean(
                 self.IGN_PROC,
                 self.tr('Ignorar as pastas e arquivos de processamento?'),
                 defaultValue=False
@@ -146,7 +146,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '2- Validação da estrutura'
+        return '2- Validar a estrutura de pastas'
 
     def displayName(self):
         """

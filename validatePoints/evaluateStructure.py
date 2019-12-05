@@ -37,6 +37,7 @@ import csv
 from datetime import datetime
 import sys
 import codecs
+from .validationRules import rules
 
 class EvaluateStructure():
     def __init__(self, pasta, medidores, data, fuso_horario, ignora_processamento):
@@ -46,7 +47,7 @@ class EvaluateStructure():
         self.data = data
         self.fuso_horario = int(fuso_horario)
         self.ignora_processamento = ignora_processamento == "True"
-
+        self.dur_min = 38 # Minimum required
         self.rinex_data = {}
         self.csv_data = {}
 
@@ -200,7 +201,7 @@ class EvaluateStructure():
     @staticmethod
     def evaluate_nome_ponto(nome):
         # botar todos os estados
-        pto_regex = "^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$"
+        pto_regex = "^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$" #mudar regex
         if search(pto_regex, nome):
             return True
         else:
@@ -210,10 +211,22 @@ class EvaluateStructure():
         erros = []
 
         data = nome[:-4].split("_")[-1]
+        
+        # Padronized CSV based on SQL. Contains every field from SQL + fuso_horario + data_rastreio
+        fields = ["cod_ponto", "operador_levantamento", "tipo_ref", "latitude", "longitude",
+            "altitude_ortometrica", "altitude_geometrica", "sistema_geodesico", "outra_ref_plan", "referencial_altim", "outro_ref_alt",
+            "tipo_situacao", "reserva", "lote", "latitude_planejada", "longitude_planejada", "medidor", "fuso_horario", ""
+            "inicio_rastreio", "fim_rastreio", "classificacao_ponto", "observacao", "metodo_posicionamento", "ponto_base", "materializado", "altura_antena",
+            "tipo_medicao_altura", "referencia_medicao_altura", "altura_objeto", "mascara_elevacao", "taxa_gravacao", "modelo_gps", "modelo_antena", "numero_serie_gps",
+            "numero_serie_antena", "modelo_geoidal", "precisao_horizontal_esperada", "freq_processada", "data_processamento", "orbita", "orgao_executante", "observacao",
+            "projeto", "engenheiro_responsavel", "crea_engenheiro_responsavel", "geometria_aproximada", "tipo_pto_ref_geod_topo", "tipo_marco_limite", "rede_referencia",
+            "referencial_grav", "situacao_marco", "data_visita", "valor_gravidade", "monografia", "numero_fotos", "possui_croqui", "possui_arquivo_rastreio"]
 
-        columns = ["cod_ponto", "operador_levantamento", "data", "hora_inicio_rastreio", "hora_fim_rastreio",
-                   "taxa_gravacao", "altura_antena", "altura_objeto", "nr_serie_antena", "nr_serie_receptor", "tipo_medicao",
-                   "materializado", "med_altura", "metodo_implantacao", "referencia_implantacao", "observacao"]
+        # Columns not required for validation
+        not_required = []
+        
+        columns = [item for item in fields if item not in not_required]
+
         ptos = []
 
         with open(join(pasta, nome), encoding='utf-8') as csv_file:
@@ -229,12 +242,12 @@ class EvaluateStructure():
                         u"{0} CSV - A coluna {1} não está presente no CSV.".format(pasta, col))
 
             for row in csv_reader:
-                if "hora_inicio_rastreio" in row and "hora_fim_rastreio" in row:
+                if "inicio_rastreio" in row and "fim_rastreio" in row:
                     try:
-                        tdelta = self.parse_date(row["hora_fim_rastreio"]) - self.parse_date(row["hora_inicio_rastreio"])
+                        tdelta = self.parse_date(row["fim_rastreio"]) - self.parse_date(row["inicio_rastreio"])
                         minutes = tdelta.seconds/60
-                        if minutes < 38:
-                            erros.append(u"{0} CSV - O ponto {1} foi medido por menos de 40 min ({2} min).".format(pasta, row["cod_ponto"],minutes))
+                        if minutes < self.dur_min:
+                            erros.append(u"{0} CSV - O ponto {1} foi medido por menos de {3} min ({2} min).".format(pasta, row["cod_ponto"],minutes, self.dur_min))
                     except Exception as e:
                         erros.append(u"{0} CSV - O ponto {1} possui valores invalidos para hora_fim_rastreio ou hora_inicio_rastreio.".format(pasta, row["cod_ponto"]))
                 if "altura_antena" in row:
@@ -259,22 +272,23 @@ class EvaluateStructure():
                             u"{0} CSV - O ponto {1} está duplicado no CSV.".format(pasta, row["cod_ponto"]))
                     else:
                         ptos.append(row["cod_ponto"])
-                if "data" in row:
-                    if row["data"] != data:
+                if "data_rastreio" in row:
+                    if row["data_rastreio"] != data:
                         erros.append(
                             u"{0} CSV - Data do ponto {1} esta incompativel.".format(pasta, row["cod_ponto"]))
-                if "materializado" in row:
-                    if row["materializado"] != "Não":
-                        erros.append(
-                            u"{0} CSV - Materializado para {1} deveria ser Não.".format(pasta, row["cod_ponto"]))
-                if "metodo_implantacao" in row:
-                    if row["metodo_implantacao"] != "PPP":
-                        erros.append(
-                            u"{0} CSV - Método de implantação para {1} deveria ser PPP.".format(pasta, row["cod_ponto"]))
-                if "referencia_implantacao" in row:
-                    if row["referencia_implantacao"] != "-":
-                        erros.append(
-                            u"{0} CSV - Referência de implantação para {1} deveria ser -.".format(pasta, row["cod_ponto"]))
+                # Specific validations for our project
+                # if "materializado" in row:
+                #     if row["materializado"] != "Não":
+                #         erros.append(
+                #             u"{0} CSV - Materializado para {1} deveria ser Não.".format(pasta, row["cod_ponto"]))
+                # if "metodo_implantacao" in row:
+                #     if row["metodo_implantacao"] != "PPP":
+                #         erros.append(
+                #             u"{0} CSV - Método de implantação para {1} deveria ser PPP.".format(pasta, row["cod_ponto"]))
+                # if "referencia_implantacao" in row:
+                #     if row["referencia_implantacao"] != "-":
+                #         erros.append(
+                #             u"{0} CSV - Referência de implantação para {1} deveria ser -.".format(pasta, row["cod_ponto"]))
         return erros
 
     @staticmethod
@@ -286,16 +300,16 @@ class EvaluateStructure():
                 aux = {}
                 if "cod_ponto" in row:
                     aux["cod_ponto"] = row["cod_ponto"]
-                if "nr_serie_receptor" in row:
-                    aux["nr_serie_receptor"] = row["nr_serie_receptor"]
-                if "nr_serie_antena" in row:
-                    aux["nr_serie_antena"] = row["nr_serie_antena"]
-                if "hora_inicio_rastreio" in row:
-                    aux["hora_inicio_rastreio"] = row["hora_inicio_rastreio"]
-                if "hora_fim_rastreio" in row:
-                    aux["hora_fim_rastreio"] = row["hora_fim_rastreio"]
-                if "data" in row:
-                    aux["data"] = row["data"]
+                if "numero_serie_gps" in row:
+                    aux["numero_serie_gps"] = row["numero_serie_gps"]
+                if "numero_serie_antena" in row:
+                    aux["numero_serie_antena"] = row["numero_serie_antena"]
+                if "inicio_rastreio" in row:
+                    aux["inicio_rastreio"] = row["inicio_rastreio"]
+                if "fim_rastreio" in row:
+                    aux["fim_rastreio"] = row["fim_rastreio"]
+                if "data_rastreio" in row:
+                    aux["data_rastreio"] = row["data_rastreio"]
                 if "altura_antena" in row:
                     aux["altura_antena"] = row["altura_antena"]
                 ptos.append(aux)
@@ -454,13 +468,13 @@ class EvaluateStructure():
                 if self.rinex_data[key]["cod_ponto_1"] != self.csv_data[key]["cod_ponto"] or self.rinex_data[key]["cod_ponto_2"] != self.csv_data[key]["cod_ponto"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o nome de ponto incorreto.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
-                if self.rinex_data[key]["nr_serie_receptor"] != self.csv_data[key]["nr_serie_receptor"]:
+                if self.rinex_data[key]["nr_serie_receptor"] != self.csv_data[key]["numero_serie_gps"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o nr serie receptor diferente do CSV.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
-                if self.rinex_data[key]["nr_serie_antena"] != self.csv_data[key]["nr_serie_antena"]:
+                if self.rinex_data[key]["nr_serie_antena"] != self.csv_data[key]["numero_serie_antena"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o nr serie antena diferente do CSV.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
-                if self.rinex_data[key]["data_rastreio_1"] != self.csv_data[key]["data"] or self.rinex_data[key]["data_rastreio_2"] != self.csv_data[key]["data"]:
+                if self.rinex_data[key]["data_rastreio_1"] != self.csv_data[key]["data_rastreio"] or self.rinex_data[key]["data_rastreio_2"] != self.csv_data[key]["data"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com a data de rastreio incorreta.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
                 try:
@@ -475,7 +489,7 @@ class EvaluateStructure():
                 try:
                     tdelta = self.parse_date(self.rinex_data[key]["hora_fim_rastreio"]) - self.parse_date(self.rinex_data[key]["hora_inicio_rastreio"])
                     minutes = tdelta.seconds/60
-                    if minutes < 38:
+                    if minutes < self.dur_min:
                         erros.append(u"{0} RINEX - O ponto {1} foi medido por menos de 40 min ({2} min).".format(pasta, self.csv_data[key]["cod_ponto"],minutes))
                     else:
                         delta_rinex_csv_i = self.parse_date(self.rinex_data[key]["hora_inicio_rastreio"]) - self.parse_date(self.csv_data[key]["hora_inicio_rastreio"])

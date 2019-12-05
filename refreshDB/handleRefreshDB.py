@@ -62,7 +62,6 @@ class HandleRefreshDB():
                         for point in points:
                             if point['cod_ponto'] == point_name:
                                 point['latitude'], point['longitude'], point['altitude_ortometrica'] = results
-                                point['altitude_geometria'] = point['altitude_ortometrica']
         return points
 
     def upsert(self, points):
@@ -98,6 +97,8 @@ def createTimeStamp(points):
     for point in points:
         point['inicio_rastreio'] = '{} {} {}'.format(point['data_visita'], point['inicio_rastreio'], -3)
         point['fim_rastreio'] = '{} {} {}'.format(point['data_visita'], point['fim_rastreio'], -3)
+        point['altura_antena'] = point['altura_antena'].replace(',', '.')
+        point['altura_objeto'] = point['altura_objeto'].replace(',', '.')
     return points
 
 def transform(x, y, z):

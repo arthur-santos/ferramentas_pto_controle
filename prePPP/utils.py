@@ -24,19 +24,19 @@ import sys
 
 
 def criaPastas(pasta):
-    pto_regex = compile(r"^([A-Z]{2})-(HV|Base)-[1-9]+[0-9]*$") # todo: define new regex
-    date_regex = compile(r"\d{4}-\d{2}-\d{2}")
+    pto_regex = r"^([A-Z]{2})-(HV|Base)-[1-9]+[0-9]*$" # todo: define new regex
+    date_regex = r"\d{4}-\d{2}-\d{2}"
     for root, dirs, files in os.walk(pasta):
-        if pto_regex.match(root.split('\\')[-1]):
+        if re.match(pto_regex, root.split('\\')[-1]):
             if not "6_Processamento_PPP" in dirs:
                 os.mkdir(os.path.join(root, "6_Processamento_PPP"))
             if not "7_Processamento_TBC_RBMC" in dirs:
                 os.mkdir(os.path.join(root, "7_Processamento_TBC_RBMC"))
-        if date_regex.match(root.split('\\')[-1].split("_")[-1]) and root.split('\\')[-1].split("_")[-1] == root.split('\\')[-2]:
+        if re.match(date_regex, root.split('\\')[-1].split("_")[-1]) and root.split('\\')[-1].split("_")[-1] == root.split('\\')[-2]:
             nome_pasta = "_Processamento_TBC_{0}".format(root.split('\\')[-1])
             if not nome_pasta in dirs:
                 os.mkdir(os.path.join(root, nome_pasta))
-        if date_regex.match(root.split('\\')[-1]):
+        if re.match(date_regex, root.split('\\')[-1]):
             if not "_Processamento_RBMC" in dirs:
                 os.mkdir(os.path.join(root, "_Processamento_RBMC"))
             if not "_Revisao" in dirs:

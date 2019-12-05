@@ -122,8 +122,9 @@ class RefreshDB(QgsProcessingAlgorithm):
         password = self.parameterAsString(parameters, self.PASSWORD, context)
 
         refresh = HandleRefreshDB(folder, server_ip, port, bdname, user, password)
-        points = refresh.getPontosFromCSV()
-        refresh.atualiza(points)
+        points = refresh.getPointsFromCSV()
+        points2 = refresh.getCoordsFromRinex(points)
+        refresh.upsert(points2)
 
         return {self.OUTPUT: ''}
 

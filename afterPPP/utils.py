@@ -37,7 +37,8 @@ def extraiZip(zip, estrutura):
 
 
 def organizePPP(estrutura_pasta, pasta_ppp):
-    pto_regex = "^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$"
+    errors = []
+    pto_regex = r"^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$" # refazer regex
     zipfiles = {f.split("_")[1][:-4]: os.path.join(pasta_ppp, f) for f in os.listdir(pasta_ppp) if os.path.isfile(
         os.path.join(pasta_ppp, f)) and f.endswith('.zip') and len(f.split("_")) == 4 and search(pto_regex, f.split("_")[1][:-4])}
     ptos_estrutura = {}
@@ -46,20 +47,17 @@ def organizePPP(estrutura_pasta, pasta_ppp):
             if "6_Processamento_PPP" in dirs:
                 ptos_estrutura[root.split(
                     '\\')[-1]] = os.path.join(root, "6_Processamento_PPP")
-            else:
-                print("O padrao de pasta para o ponto {0} esta incorreto (nao possui 6_Processamento_PPP)".format(
-                    root.split('\\')[-1]))
 
     for zip_pto in zipfiles:
         if zip_pto in ptos_estrutura:
             extraiZip(zipfiles[zip_pto], ptos_estrutura[zip_pto])
 
-    print("Pontos nao encontrados na estrutura:")
-    print(repr(list(set(zipfiles.keys()) - set(ptos_estrutura.keys()))))
-    print("------------------------------------")
-    print("Pontos que nao possuem zip:")
-    print(repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys()))))
+    if set(zipfiles.keys()) - set(ptos_estrutura.keys()):
+        errors.append('Pontos nao encontrados na estrutura: {}'.format(repr(list(set(zipfiles.keys()) - set(ptos_estrutura.keys())))))
+    if set(ptos_estrutura.keys()) - set(zipfiles.keys()):
+        errors.append('Pontos que não possuem zip: {}'.format(repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys())))))
 
+    return errors
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:

@@ -20,8 +20,8 @@ reference:
 import os
 import sys
 import csv
-import psycopg2
 import re
+import psycopg2
 import pyproj
 
 
@@ -70,16 +70,13 @@ class HandleRefreshDB():
             str_value = ''
             debug = ''
             lista = list(point.items())
-            print(lista[0])
             for key, value in lista:
                 str_key += '{},'.format(key)
                 if value:
                     str_value += "'{}',".format(value)
                 else:
-                    str_value += " ,"
-                    print('mopa')
+                    str_value += "DEFAULT,"
                 debug += '{} : {}\n'.format(key, value)
-            print(debug)
             self.cursor.execute(u"""
             INSERT INTO bpc.ponto_controle_p ({keys}, geom)
             VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))

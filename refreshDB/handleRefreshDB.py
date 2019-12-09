@@ -68,11 +68,18 @@ class HandleRefreshDB():
         for point in points:
             str_key = ''
             str_value = ''
+            debug = ''
             lista = list(point.items())
             print(lista[0])
             for key, value in lista:
                 str_key += '{},'.format(key)
-                str_value += "'{}',".format(value)
+                if value:
+                    str_value += "'{}',".format(value)
+                else:
+                    str_value += " ,"
+                    print('mopa')
+                debug += '{} : {}\n'.format(key, value)
+            print(debug)
             self.cursor.execute(u"""
             INSERT INTO bpc.ponto_controle_p ({keys}, geom)
             VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
@@ -95,10 +102,11 @@ class HandleRefreshDB():
 
 def createTimeStamp(points):
     for point in points:
-        point['inicio_rastreio'] = '{} {} {}'.format(point['data_visita'], point['inicio_rastreio'], -3)
-        point['fim_rastreio'] = '{} {} {}'.format(point['data_visita'], point['fim_rastreio'], -3)
+        point['inicio_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['inicio_rastreio'], -3)
+        point['fim_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['fim_rastreio'], -3)
         point['altura_antena'] = point['altura_antena'].replace(',', '.')
         point['altura_objeto'] = point['altura_objeto'].replace(',', '.')
+        del point['data_rastreio'], point['fuso_horario']
     return points
 
 def transform(x, y, z):

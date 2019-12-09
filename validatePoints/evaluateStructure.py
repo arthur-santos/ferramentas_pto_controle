@@ -37,7 +37,6 @@ import csv
 from datetime import datetime
 import sys
 import codecs
-from .validationRules import rules
 
 class EvaluateStructure():
     def __init__(self, pasta, medidores, data, fuso_horario, ignora_processamento):
@@ -46,8 +45,12 @@ class EvaluateStructure():
         self.medidores = medidores.split(";")
         self.data = data
         self.fuso_horario = int(fuso_horario)
-        self.ignora_processamento = ignora_processamento == "True"
-        self.dur_min = 38 # Minimum required
+        self.ignora_processamento = ignora_processamento
+        self.rules = {
+            'modelo_gps' : 'TRIMBLE 5700II',
+            'modelo_antena' : 'TRM39105.00',
+            'dur_min' : 38
+        }
         self.rinex_data = {}
         self.csv_data = {}
 
@@ -213,9 +216,9 @@ class EvaluateStructure():
         data = nome[:-4].split("_")[-1]
         
         # Padronized CSV based on SQL. Contains every field from SQL + fuso_horario + data_rastreio
-        fields = ["cod_ponto", "operador_levantamento", "tipo_ref", "latitude", "longitude",
-            "altitude_ortometrica", "altitude_geometrica", "sistema_geodesico", "outra_ref_plan", "referencial_altim", "outro_ref_alt",
-            "tipo_situacao", "reserva", "lote", "latitude_planejada", "longitude_planejada", "medidor", "fuso_horario", ""
+        fields = ["cod_ponto", "medidor", "tipo_ref", "latitude", "longitude",
+            "altitude_ortometrica", "altitude_geometrica", "sistema_geodesico", "outra_ref_plan", "referencial_altim", "outro_ref_alt", "data_rastreio",
+            "tipo_situacao", "reserva", "lote", "latitude_planejada", "longitude_planejada", "medidor", "fuso_horario", "precisao_vertical_esperada",
             "inicio_rastreio", "fim_rastreio", "classificacao_ponto", "observacao", "metodo_posicionamento", "ponto_base", "materializado", "altura_antena",
             "tipo_medicao_altura", "referencia_medicao_altura", "altura_objeto", "mascara_elevacao", "taxa_gravacao", "modelo_gps", "modelo_antena", "numero_serie_gps",
             "numero_serie_antena", "modelo_geoidal", "precisao_horizontal_esperada", "freq_processada", "data_processamento", "orbita", "orgao_executante", "observacao",
@@ -246,8 +249,8 @@ class EvaluateStructure():
                     try:
                         tdelta = self.parse_date(row["fim_rastreio"]) - self.parse_date(row["inicio_rastreio"])
                         minutes = tdelta.seconds/60
-                        if minutes < self.dur_min:
-                            erros.append(u"{0} CSV - O ponto {1} foi medido por menos de {3} min ({2} min).".format(pasta, row["cod_ponto"],minutes, self.dur_min))
+                        if minutes < self.rules['dur_min']:
+                            erros.append(u"{0} CSV - O ponto {1} foi medido por menos de {3} min ({2} min).".format(pasta, row["cod_ponto"],minutes, self.rules['dur_min']))
                     except Exception as e:
                         erros.append(u"{0} CSV - O ponto {1} possui valores invalidos para hora_fim_rastreio ou hora_inicio_rastreio.".format(pasta, row["cod_ponto"]))
                 if "altura_antena" in row:
@@ -456,9 +459,9 @@ class EvaluateStructure():
     def compare_csv_rinex(self, pasta):
         erros = []
         for key in self.rinex_data:
-            if self.rinex_data[key]['modelo_receptor'] != 'TRIMBLE 5700II':
+            if self.rinex_data[key]['modelo_receptor'] != self.rules['modelo_gps']:
                 erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o modelo incorreto do receptor (é {2} deveria ser TRIMBLE 5700II)".format(pasta, self.rinex_data[key]["cod_ponto_1"], self.rinex_data[key]["modelo_receptor"]))           
-            if self.rinex_data[key]['modelo_antena'] != 'TRM39105.00':
+            if self.rinex_data[key]['modelo_antena'] != self.rules['modelo_antena']:
                 erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o modelo incorreto de antena (é {2} deveria ser TRM39105.00)".format(pasta, self.rinex_data[key]["cod_ponto_1"], self.rinex_data[key]["modelo_antena"]))           
             if self.rinex_data[key]['modelo_none']:
                 erros.append(u"{0}: O arquivo RINEX do ponto {1} contém NONE no modelo da antena.".format(pasta, self.rinex_data[key]["cod_ponto_1"]))
@@ -474,7 +477,7 @@ class EvaluateStructure():
                 if self.rinex_data[key]["nr_serie_antena"] != self.csv_data[key]["numero_serie_antena"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o nr serie antena diferente do CSV.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
-                if self.rinex_data[key]["data_rastreio_1"] != self.csv_data[key]["data_rastreio"] or self.rinex_data[key]["data_rastreio_2"] != self.csv_data[key]["data"]:
+                if self.rinex_data[key]["data_rastreio_1"] != self.csv_data[key]["data_rastreio"] or self.rinex_data[key]["data_rastreio_2"] != self.csv_data[key]["data_rastreio"]:
                     erros.append(u"{0}: O arquivo RINEX do ponto {1} está com a data de rastreio incorreta.".format(pasta, self.csv_data[key]["cod_ponto"]))
                 
                 try:
@@ -489,11 +492,11 @@ class EvaluateStructure():
                 try:
                     tdelta = self.parse_date(self.rinex_data[key]["hora_fim_rastreio"]) - self.parse_date(self.rinex_data[key]["hora_inicio_rastreio"])
                     minutes = tdelta.seconds/60
-                    if minutes < self.dur_min:
+                    if minutes < self.rules['dur_min']:
                         erros.append(u"{0} RINEX - O ponto {1} foi medido por menos de 40 min ({2} min).".format(pasta, self.csv_data[key]["cod_ponto"],minutes))
                     else:
-                        delta_rinex_csv_i = self.parse_date(self.rinex_data[key]["hora_inicio_rastreio"]) - self.parse_date(self.csv_data[key]["hora_inicio_rastreio"])
-                        delta_rinex_csv_f = self.parse_date(self.rinex_data[key]["hora_fim_rastreio"]) - self.parse_date(self.csv_data[key]["hora_fim_rastreio"])
+                        delta_rinex_csv_i = self.parse_date(self.rinex_data[key]["hora_inicio_rastreio"]) - self.parse_date(self.csv_data[key]["inicio_rastreio"])
+                        delta_rinex_csv_f = self.parse_date(self.rinex_data[key]["hora_fim_rastreio"]) - self.parse_date(self.csv_data[key]["fim_rastreio"])
 
                         minutes_i = delta_rinex_csv_i.seconds/60 + 60*self.fuso_horario 
                         minutes_f = delta_rinex_csv_f.seconds/60 + 60*self.fuso_horario 
@@ -504,7 +507,7 @@ class EvaluateStructure():
                             erros.append(u"{0} - O ponto {1} tem diferença maior que 5 min entre o RINEX e o CSV para a hora_fim_rastreio".format(pasta, self.csv_data[key]["cod_ponto"]))
 
                 except Exception as e:
-                    erros.append(u"{0} RINEX - O ponto {1} está possui valores inválidos para hora_fim_rastreio ou hora_inicio_rastreio. Contate o Gerente.".format(pasta, self.csv_data[key]["cod_ponto"]))
+                    erros.append(u"{0} RINEX - O ponto {1} está possui valores inválidos para fim_rastreio ou inicio_rastreio. Contate o Gerente.".format(pasta, self.csv_data[key]["cod_ponto"]))
 
             else:
                 erros.append(u"{0}: Não foi encontrado informações do RINEX compatíveis com o ponto {1}.".format(pasta, self.csv_data[key]["cod_ponto"]))                

@@ -124,7 +124,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         folder = self.parameterAsFile(parameters, self.FOLDER, context)
         operators = self.parameterAsString(parameters, self.OPERATORS, context)
         date = self.parameterAsString(parameters, self.DATE, context)
-        fuse = self.parameterAsInt(parameters, self.OPERATORS, context)
+        fuse = self.parameterAsInt(parameters, self.FUSE, context)
         ign_proc = self.parameterAsBoolean(parameters, self.IGN_PROC, context)
         file_dst = self.parameterAsFileOutput(
             parameters, self.FILE_DST, context)

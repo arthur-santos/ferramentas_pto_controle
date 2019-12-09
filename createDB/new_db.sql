@@ -241,7 +241,7 @@ CREATE TABLE bpc.ponto_controle_p(
   referencial_altim SMALLINT NOT NULL REFERENCES  dominios.referencial_altim(code) DEFAULT 9999,
   outro_ref_alt VARCHAR(255),
   tipo_situacao SMALLINT NOT NULL REFERENCES dominios.tipo_situacao(code) DEFAULT 9999,
-  reserva BOOLEAN NOT NULL DEFAULT FALSE,
+  reserva BOOLEAN, --not null?
   lote VARCHAR(255),
   latitude_planejada REAL, --graus decimais
   longitude_planejada REAL, --graus decimais
@@ -252,7 +252,7 @@ CREATE TABLE bpc.ponto_controle_p(
   observacao VARCHAR(255),
   metodo_posicionamento SMALLINT NOT NULL REFERENCES dominios.metodo_posicionamento(code) DEFAULT 9999,
   ponto_base VARCHAR(255),
-  materializado BOOLEAN NOT NULL DEFAULT FALSE,
+  materializado BOOLEAN, --not null?
   altura_antena REAL, --metros
   tipo_medicao_altura SMALLINT NOT NULL REFERENCES dominios.tipo_medicao_altura(code) DEFAULT 9999,
   referencia_medicao_altura SMALLINT NOT NULL REFERENCES dominios.referencia_medicao_altura(code) DEFAULT 9999,

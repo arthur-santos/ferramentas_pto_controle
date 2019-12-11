@@ -231,6 +231,7 @@ ALTER TABLE bpc.controle_medicao_a OWNER TO postgres;
 CREATE TABLE bpc.ponto_controle_p(
   id SERIAL NOT NULL PRIMARY KEY,
   cod_ponto VARCHAR(255) UNIQUE NOT NULL,
+  data_rastreio DATE NOT NULL,
   tipo_ref SMALLINT NOT NULL REFERENCES dominios.tipo_ref(code) DEFAULT 9999,
   latitude REAL, --graus decimais
   longitude REAL, --graus decimais

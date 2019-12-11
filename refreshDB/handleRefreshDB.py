@@ -84,7 +84,8 @@ class HandleRefreshDB():
             DO
             UPDATE
                 SET medidor = '{medidor}', tipo_situacao = 2
-                WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 3);
+                WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (
+                    ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 3 OR ponto_controle_p.tipo_situacao = 9999);
             """.format(keys=str_key[:-1], values=str_value[:-1], **point))
         self.conn.commit()
 
@@ -99,11 +100,11 @@ class HandleRefreshDB():
 
 def createTimeStamp(points):
     for point in points:
-        point['inicio_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['inicio_rastreio'], -3)
-        point['fim_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['fim_rastreio'], -3)
+        point['inicio_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['inicio_rastreio'], point['fuso_horario'])
+        point['fim_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['fim_rastreio'], point['fuso_horario'])
         point['altura_antena'] = point['altura_antena'].replace(',', '.')
         point['altura_objeto'] = point['altura_objeto'].replace(',', '.')
-        del point['data_rastreio'], point['fuso_horario']
+        del point['fuso_horario']
     return points
 
 def transform(x, y, z):

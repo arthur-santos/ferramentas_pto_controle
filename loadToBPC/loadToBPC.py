@@ -33,10 +33,12 @@ import subprocess
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterEnum)
 from qgis.PyQt.QtCore import QCoreApplication
 from processing.tools import postgis
-from .utils import *
+from .handleLoadToBPC import HandleLoadToBPC
 
 
 class LoadToBPC(QgsProcessingAlgorithm):
@@ -57,7 +59,8 @@ class LoadToBPC(QgsProcessingAlgorithm):
     FOLDERIN = 'FOLDERIN'
     FOLDEROUT = 'FOLDEROUT'
     DATABASE = 'DATABASE'
-    DATABASE2 = 'DATABASE'
+    TESTE1 = 'TESTE1'
+    TESTE2 = 'TESTE2'
 
     def initAlgorithm(self, config):
         """
@@ -95,7 +98,9 @@ class LoadToBPC(QgsProcessingAlgorithm):
         folder_out = self.parameterAsFile(parameters, self.FOLDEROUT, context)
         connection = self.parameterAsString(parameters, self.DATABASE, context)
 
-        where_clausule = getPointsFromCSV(folder_in)
+        handle = HandleLoadToBPC(folder_in, folder_out)
+        where_clausule = handle.getPointsFromCSV()
+        # handle.gerenatezip()
         uri = postgis.uri_from_name(connection)
         db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(uri.database(), uri.host(), uri.port(), uri.username(), uri.password())
 

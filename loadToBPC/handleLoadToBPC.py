@@ -31,7 +31,7 @@ __revision__ = '$Format:%H$'
 
 import os
 import csv
-import re
+import zipfile
 from pathlib import Path
 
 class HandleLoadToBPC():
@@ -39,43 +39,44 @@ class HandleLoadToBPC():
     def __init__(self, folderin, folderout):
         self.folder = folderin
         self.output = folderout
-        
+
     def getPointsFromCSV(self):
+        '''
+        Reads points from CSV and prompts the generation of zipfile.
+        Returns WHERE clausule in the end
+        '''
         points = ''
         for root, dirs, files in os.walk(self.folder):
             for f in files:
                 if f.endswith(".csv"):
+                    self.gerenatezip(Path(root))
                     with open(os.path.join(root, f)) as csv_file:
                         csv_reader = csv.DictReader(csv_file)
                         for row in csv_reader:
-                            self.gerenatezip(root, row['cod_ponto'])
                             points += "'{}',".format(row['cod_ponto'])
-        self.points = points
         return "WHERE cod_ponto IN ({})".format(points[:-1])
 
-    @staticmethod
-    def gerenatezip(root, cod_ponto):
-        #Get files who are going to be zipped
-        path = Path(root, cod_ponto)
-        files = [
-            path / '1_Formato_Nativo' / '{}.T01'.format(cod_ponto),
-            path / '2_RINEX' / '{}.zip'.format(cod_ponto),
-            path / '7_Processamento_TBC_RBMC' / '{}_ACURACIA_PRE.pdf'.format(cod_ponto)
-        ]
-        path_ppp = path / '6_Processamento_PPP'
-        path_pre = path / '7_Processamento_TBC_RBMC'
-        for child in path_ppp.iterdir():
-            if child.suffix == '.pdf':
-                files.append(child)
-        
-        # Checks if files exists
-        
-        # for root, dirs, files in os.walk(folder):
-        #     for f in files:
-        #         if f.endswith(".csv"):
-        #             with open(os.path.join(root, f)) as csv_file:
-        #                 csv_reader = csv.DictReader(csv_file)
-        #                 for row in csv_reader:
-        #                     gerenatezip(root, f)
-        #                     points += "'{}',".format(row['cod_ponto'])
-        # return "WHERE cod_ponto IN ({})".format(points[:-1])
+    def gerenatezip(self, root):
+        '''
+        Creates an expression generator to select folders with points, then
+        checks the existence of PPP/TBC files and generates the zips
+        '''
+        points = (x for x in root.iterdir() if Path(root / x / '1_Formato_Nativo').exists())
+        for point in points:
+            name = point.name
+            files = [
+                point / '1_Formato_Nativo' / '{}.T01'.format(name),
+                point / '2_RINEX' / '{}.zip'.format(name),
+            ]
+            path_ppp = point / '6_Processamento_PPP'
+            path_pre = point / '7_Processamento_TBC_RBMC'
+            for child in path_ppp.iterdir():
+                if child.suffix == '.pdf':
+                    files.append(child)
+            for child in path_pre.iterdir():
+                if child.suffix == '.pdf':
+                    files.append(child)
+            zf = zipfile.ZipFile(Path(self.output, '{}.zip'.format(name)), 'w', zipfile.ZIP_DEFLATED)
+            for item in files:
+                if item.exists():
+                    zf.write(item, item.relative_to(point))

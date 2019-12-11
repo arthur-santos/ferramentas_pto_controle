@@ -99,14 +99,12 @@ class LoadToBPC(QgsProcessingAlgorithm):
         connection = self.parameterAsString(parameters, self.DATABASE, context)
 
         handle = HandleLoadToBPC(folder_in, folder_out)
-        where_clausule = handle.getPointsFromCSV()
-        # handle.gerenatezip()
+        where_clausule = handle.getPointsFromCSV() # Returns where clausule and creates zipfiles
         uri = postgis.uri_from_name(connection)
         db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(uri.database(), uri.host(), uri.port(), uri.username(), uri.password())
 
         process = 'ogr2ogr -f GPKG "{}\\geopkg.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(folder_out, db_string, where_clausule)
-        print(process)
-        # subprocess.run(process)
+        subprocess.run(process)
 
         # # Compute the number of steps to display within the progress bar and
         # # get features from source

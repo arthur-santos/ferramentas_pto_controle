@@ -235,12 +235,16 @@ CREATE TABLE bpc.ponto_controle_p(
   tipo_ref SMALLINT NOT NULL REFERENCES dominios.tipo_ref(code) DEFAULT 9999,
   latitude REAL, --graus decimais
   longitude REAL, --graus decimais
+  norte REAL,
+  este REAL,
   altitude_ortometrica REAL, --metros
   altitude_geometrica REAL,  --metros
   sistema_geodesico SMALLINT NOT NULL REFERENCES  dominios.sistema_geodesico(code) DEFAULT 9999,
   outra_ref_plan VARCHAR(255),
   referencial_altim SMALLINT NOT NULL REFERENCES  dominios.referencial_altim(code) DEFAULT 9999,
   outro_ref_alt VARCHAR(255),
+  fuso VARCHAR(255),
+  meridiano_central VARCHAR(255),
   tipo_situacao SMALLINT NOT NULL REFERENCES dominios.tipo_situacao(code) DEFAULT 9999,
   reserva BOOLEAN, --not null?
   lote VARCHAR(255),

@@ -226,7 +226,7 @@ class EvaluateStructure():
             "referencial_grav", "situacao_marco", "data_visita", "valor_gravidade", "monografia", "numero_fotos", "possui_croqui", "possui_arquivo_rastreio"]
 
         # Columns not required for validation
-        not_required = []
+        not_required = ['fuso', 'meridiano_central', 'norte', 'este']
         
         columns = [item for item in fields if item not in not_required]
 

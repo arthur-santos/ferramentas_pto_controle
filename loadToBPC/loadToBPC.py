@@ -138,7 +138,7 @@ class LoadToBPC(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '8- Preparar insumos para carregamento no BPC'
+        return '9- Preparar insumos para carregamento no BPC'
 
     def displayName(self):
         """

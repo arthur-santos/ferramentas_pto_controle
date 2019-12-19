@@ -16,7 +16,7 @@ A rotina possui os seguintes parâmetros:
 * *operadores*: Nome dos operadores separados por ;
 * *data*: Data de realização da medição, no formato YYYY/MM/DD
 * *fuso horário*: Fuso horário dos tempos informados
-<!-- * *ignora_processamento*: Valor booleano que informa se deve ignorar as pastas e arquivos de processamento na avaliação. -->
+* *ignora_processamento*: Valor booleano que informa se deve ignorar as pastas e arquivos de processamento na avaliação.
 * *log*: Arquivo com o relatório de erros
 
 ## Atualiza banco de dados de controle

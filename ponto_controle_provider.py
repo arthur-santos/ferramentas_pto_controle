@@ -33,7 +33,7 @@ from qgis.core import QgsProcessingProvider
 from .validatePoints.validatePoints import ValidatePoints
 from .refreshDB.refreshDB import RefreshDB
 from .createDB.createDB import CreateDatabase
-from .prePPP.prePPP import PrePPP
+from .beforePPP.beforePPP import BeforePPP
 from .afterPPP.afterPPP import AfterPPP
 from .loadToBPC.loadToBPC import LoadToBPC
 
@@ -62,7 +62,7 @@ class PontoControleProvider(QgsProcessingProvider):
         self.addAlgorithm(ValidatePoints())
         self.addAlgorithm(RefreshDB())
         self.addAlgorithm(CreateDatabase())
-        self.addAlgorithm(PrePPP())
+        self.addAlgorithm(BeforePPP())
         self.addAlgorithm(AfterPPP())
         self.addAlgorithm(LoadToBPC())
 
@@ -81,7 +81,7 @@ class PontoControleProvider(QgsProcessingProvider):
 
         This string should be short (e.g. "Lastools") and localised.
         """
-        return self.tr('Control Points Management')
+        return self.tr('Ferramentas para Pontos de Controle')
 
     def icon(self):
         """

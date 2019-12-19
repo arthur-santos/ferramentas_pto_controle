@@ -67,7 +67,7 @@ class RefreshDB(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insira a pasta'),
+                self.tr('Selecionar a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -167,7 +167,7 @@ class RefreshDB(QgsProcessingAlgorithm):
         Retruns a short helper string for the algorithm
         """
         return self.tr('''
-        Esta ferramenta irá atualizará o banco de dados de pontos de controle.
+        Esta ferramenta atualizará o banco de dados de pontos de controle.
         Utilizando como referência uma pasta devidamente validada pela ferramenta 2 - Data Validation, serão inseridos os pontos de controle localizados dentro da pasta.
         Os parâmetros necessários são:
         - Pasta com a estrutura de pontos de controle (deve estar validada de pela ferramenta Data Validation)

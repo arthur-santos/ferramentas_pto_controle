@@ -74,7 +74,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insira a pasta'),
+                self.tr('Selecione a pasta da estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )

@@ -236,7 +236,7 @@ CREATE TABLE bpc.ponto_controle_p(
   latitude REAL, --graus decimais
   longitude REAL, --graus decimais
   norte REAL,
-  este REAL,
+  leste REAL,
   altitude_ortometrica REAL, --metros
   altitude_geometrica REAL,  --metros
   sistema_geodesico SMALLINT NOT NULL REFERENCES  dominios.sistema_geodesico(code) DEFAULT 9999,
@@ -246,7 +246,7 @@ CREATE TABLE bpc.ponto_controle_p(
   fuso VARCHAR(255),
   meridiano_central VARCHAR(255),
   tipo_situacao SMALLINT NOT NULL REFERENCES dominios.tipo_situacao(code) DEFAULT 9999,
-  reserva BOOLEAN, --not null?
+  reserva BOOLEAN DEFAULT FALSE, --not null?
   lote VARCHAR(255),
   latitude_planejada REAL, --graus decimais
   longitude_planejada REAL, --graus decimais
@@ -257,7 +257,7 @@ CREATE TABLE bpc.ponto_controle_p(
   observacao VARCHAR(255),
   metodo_posicionamento SMALLINT NOT NULL REFERENCES dominios.metodo_posicionamento(code) DEFAULT 9999,
   ponto_base VARCHAR(255),
-  materializado BOOLEAN, --not null?
+  materializado BOOLEAN DEFAULT FALSE, --not null?
   altura_antena REAL, --metros
   tipo_medicao_altura SMALLINT NOT NULL REFERENCES dominios.tipo_medicao_altura(code) DEFAULT 9999,
   referencia_medicao_altura SMALLINT NOT NULL REFERENCES dominios.referencia_medicao_altura(code) DEFAULT 9999,
@@ -286,10 +286,10 @@ CREATE TABLE bpc.ponto_controle_p(
   situacao_marco SMALLINT NOT NULL REFERENCES dominios.situacao_marco(code) DEFAULT 9999,
   data_visita DATE,
   valor_gravidade REAL,
-  monografia VARCHAR(255),
+  possui_monografia BOOLEAN  DEFAULT FALSE,
   numero_fotos SMALLINT,
-  possui_croqui BOOLEAN,
-  possui_arquivo_rastreio BOOLEAN,
+  possui_croqui BOOLEAN DEFAULT TRUE,
+  possui_arquivo_rastreio BOOLEAN  DEFAULT TRUE,
   geom geometry(POINT,4674) NOT NULL
 );
 CREATE INDEX ponto_controle_p_geom ON bpc.ponto_controle_p USING gist (geom);

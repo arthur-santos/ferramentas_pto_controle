@@ -70,14 +70,14 @@ class LoadToBPC(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDERIN,
-                self.tr('Insira a pasta com a estrutura de pontos de controle'),
+                self.tr('Selecione a pasta com a estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDEROUT,
-                self.tr('Insira a pasta na qual serão gerados os arquivos:'),
+                self.tr('Selecione a pasta na qual serão gerados os arquivos:'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -99,35 +99,12 @@ class LoadToBPC(QgsProcessingAlgorithm):
         connection = self.parameterAsString(parameters, self.DATABASE, context)
 
         handle = HandleLoadToBPC(folder_in, folder_out)
-        where_clausule = handle.getPointsFromCSV() # Returns where clausule and creates zipfiles
         uri = postgis.uri_from_name(connection)
         db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(uri.database(), uri.host(), uri.port(), uri.username(), uri.password())
 
         process = 'ogr2ogr -f GPKG "{}\\geopkg.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(folder_out, db_string, where_clausule)
         subprocess.run(process)
 
-        # # Compute the number of steps to display within the progress bar and
-        # # get features from source
-        # total=100.0 / source.featureCount() if source.featureCount() else 0
-        # features=source.getFeatures()
-
-        # for current, feature in enumerate(features):
-        #     # Stop the algorithm if cancel button has been clicked
-        #     if feedback.isCanceled():
-        #         break
-
-        #     # Add a feature in the sink
-        #     sink.addFeature(feature, QgsFeatureSink.FastInsert)
-
-        #     # Update the progress bar
-        #     feedback.setProgress(int(current * total))
-
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
         return {self.OUTPUT: ''}
 
     def name(self):
@@ -138,7 +115,7 @@ class LoadToBPC(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return '8- Preparar insumos para carregamento no BPC'
+        return '9- Preparar insumos para carregamento no BPC'
 
     def displayName(self):
         """
@@ -168,7 +145,10 @@ class LoadToBPC(QgsProcessingAlgorithm):
         """
         Retruns a short helper string for the algorithm
         """
-        return self.tr('Esta ferramenta gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage o(s) arquivo(s) zipados')
+        return self.tr('''
+        Esta ferramenta gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage o(s) arquivo(s) zipados.
+        Note que é necessário a execução da rotina de geração de monografia, uma vez que a monografia é necessária no zip a ser gerado.
+        ''')
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

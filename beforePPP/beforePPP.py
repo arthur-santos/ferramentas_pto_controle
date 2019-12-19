@@ -33,10 +33,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile)
 from qgis.PyQt.QtCore import QCoreApplication
-from .utils import criaPastas, zipaPPP
+from .handleBeforePPP import criaPastas, zipaPPP
 
 
-class PrePPP(QgsProcessingAlgorithm):
+class BeforePPP(QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -61,7 +61,7 @@ class PrePPP(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER,
-                self.tr('Insira a pasta'),
+                self.tr('Selecionar a pasta da estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -115,8 +115,8 @@ class PrePPP(QgsProcessingAlgorithm):
         Retruns a short helper string for the algorithm
         """
         return self.tr('''
-        Esta ferramenta cria as pastas 6_Processamento_PPP e 7_Processamento_TBC_RBMC na estrutura de pastas e compacta os arquivos RINEX no formato zip.
-        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
+        Esta ferramenta cria a pasta 6_Processamento_PPP na estrutura de pastas e compacta os arquivos RINEX no formato zip.
+        Para o correto funcionamento desta ferramenta é indispensável que as pastas estejam devidamente validadas pela rotina 2- Validar a estrutura de pastas .
         Os parâmetros necessários são:
         - Pasta com a estrutura de pontos de controle
         ''')
@@ -125,4 +125,4 @@ class PrePPP(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return PrePPP()
+        return BeforePPP()

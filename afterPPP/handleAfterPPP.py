@@ -38,7 +38,7 @@ def extraiZip(zip, estrutura):
 
 def organizePPP(estrutura_pasta, pasta_ppp):
     errors = []
-    pto_regex = r"^(RS|PR|SC|SP)-(HV|Base)-[1-9]+[0-9]*$" # refazer regex
+    pto_regex = r"^[A-Z][A-Z]-(HV|Base)-[1-9]+[0-9]*$"
     zipfiles = {f.split("_")[1][:-4]: os.path.join(pasta_ppp, f) for f in os.listdir(pasta_ppp) if os.path.isfile(
         os.path.join(pasta_ppp, f)) and f.endswith('.zip') and len(f.split("_")) == 4 and search(pto_regex, f.split("_")[1][:-4])}
     ptos_estrutura = {}
@@ -58,9 +58,3 @@ def organizePPP(estrutura_pasta, pasta_ppp):
         errors.append('Pontos que não possuem zip: {}'.format(repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys())))))
 
     return errors
-
-if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        organizePPP(sys.argv[1], sys.argv[2])
-    else:
-        print(u'Parametros incorretos!')

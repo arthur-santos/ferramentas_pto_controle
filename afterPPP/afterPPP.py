@@ -33,7 +33,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile)
 from qgis.PyQt.QtCore import QCoreApplication
-from .utils import organizePPP
+from .handleAfterPPP import organizePPP
 
 
 class AfterPPP(QgsProcessingAlgorithm):
@@ -62,14 +62,14 @@ class AfterPPP(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDERIN,
-                self.tr('Insira a pasta da estrutura de pontos de controle'),
+                self.tr('Selecione a pasta da estrutura de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDEROUT,
-                self.tr('Insira a pasta dos arquivos PPP'),
+                self.tr('Selecionar a pasta dos arquivos PPP'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )

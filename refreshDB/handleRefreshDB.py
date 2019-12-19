@@ -23,19 +23,20 @@ import csv
 import re
 import psycopg2
 import pyproj
+from pathlib import Path
 
 
 class HandleRefreshDB():
     def __init__(self, pasta, servidor, porta, nome_bd, usuario, senha):
-        self.pasta = pasta
+        self.pasta = Path(pasta)
         conn_string = "host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(
             servidor, porta, nome_bd, usuario, senha)
         self.conn = psycopg2.connect(conn_string)
         self.cursor = self.conn.cursor()
 
     def getPointsFromCSV(self):
-        ''' 
-        Gets every row from CSV to prepare the commit on database 
+        '''
+        Gets every row from CSV to prepare the commit on database
         '''
         points = []
         for root, dirs, files in os.walk(self.pasta):
@@ -83,20 +84,21 @@ class HandleRefreshDB():
             ON CONFLICT (cod_ponto)
             DO
             UPDATE
-                SET medidor = '{medidor}', tipo_situacao = 2
+                SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
                 WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (
-                    ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 3 OR ponto_controle_p.tipo_situacao = 9999);
+                    ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 4 OR ponto_controle_p.tipo_situacao = 9999);
             """.format(keys=str_key[:-1], values=str_value[:-1], **point))
+            croqui, arq_rastreio, fotos = self.getAdditionalInfo(point)
+            self.cursor.execute(u'''
+            UPDATE bpc.ponto_controle_p SET (numero_fotos, possui_croqui, possui_arquivo_rastreio, tipo_situacao) = ({}, {}, {}, 2) WHERE cod_ponto = '{}'
+            '''.format(fotos, bool(croqui), bool(arq_rastreio), point['cod_ponto']))
         self.conn.commit()
 
-
-    def fetch(self):
-        cursor = self.conn.cursor()
-        cursor.execute(u"""
-        SELECT nome FROM controle.ponto_controle_p
-        """)
-        points = self.cursor.fetchall()
-        print(points)
+    def getAdditionalInfo(self, point):
+        croqui = [x for x in self.pasta.rglob('*') if x.is_file() and x.match('*{}_CROQUI.jpg'.format(point['cod_ponto']))]
+        arq_rastreio = [x for x in self.pasta.rglob('*') if x.is_file() and x.match('{}.T01'.format(point['cod_ponto']))]
+        fotos = [x for x in self.pasta.rglob('*') if x.is_file() and x.parent.name == '3_Foto_Rastreio' and x.match('{}*.jpg'.format(point['cod_ponto']))]
+        return len(croqui), len(arq_rastreio), len(fotos)
 
 def createTimeStamp(points):
     for point in points:
@@ -116,6 +118,6 @@ if __name__ == '__main__':
     atualiza_db = HandleRefreshDB(sys.argv[1], sys.argv[2],
                                   sys.argv[3], sys.argv[4],
                                   sys.argv[5], sys.argv[6])
-    points = atualiza_db.getPointsFromCSV()
-    points2 = atualiza_db.getCoordsFromRinex(points)
+    values = atualiza_db.getPointsFromCSV()
+    points2 = atualiza_db.getCoordsFromRinex(values)
     atualiza_db.upsert(points2)

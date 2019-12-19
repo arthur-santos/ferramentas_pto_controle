@@ -44,6 +44,7 @@ class HandleLoadToBPC():
         '''
         Reads points from CSV and prompts the generation of zipfile.
         Returns WHERE clausule in the end
+        !Maybe obsolete!
         '''
         points = ''
         for root, dirs, files in os.walk(self.folder):
@@ -59,23 +60,22 @@ class HandleLoadToBPC():
     def gerenatezip(self, root):
         '''
         Creates an expression generator to select folders with points, then
-        checks the existence of PPP/TBC files and generates the zips
+        checks the existence of PPP files and generates the zips
         '''
         points = (x for x in root.iterdir() if Path(root / x / '1_Formato_Nativo').exists())
         for point in points:
             name = point.name
             files = [
                 point / '1_Formato_Nativo' / '{}.T01'.format(name),
-                point / '2_RINEX' / '{}.zip'.format(name),
+                point / '2_RINEX' / '{}.zip'.format(name)
             ]
             path_ppp = point / '6_Processamento_PPP'
-            path_pre = point / '7_Processamento_TBC_RBMC'
+            path_mono = point / '{}.pdf'.format(point)
             for child in path_ppp.iterdir():
                 if child.suffix == '.pdf':
                     files.append(child)
-            for child in path_pre.iterdir():
-                if child.suffix == '.pdf':
-                    files.append(child)
+            if path_mono.exists():
+                files.append(path_mono)
             zf = zipfile.ZipFile(Path(self.output, '{}.zip'.format(name)), 'w', zipfile.ZIP_DEFLATED)
             for item in files:
                 if item.exists():

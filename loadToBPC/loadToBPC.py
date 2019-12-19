@@ -35,9 +35,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterString,
                        QgsProcessingParameterField,
-                       QgsProcessingParameterEnum)
+                       QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
-from processing.tools import postgis
 from .handleLoadToBPC import HandleLoadToBPC
 
 
@@ -58,9 +57,11 @@ class LoadToBPC(QgsProcessingAlgorithm):
     OUTPUT = 'OUTPUT'
     FOLDERIN = 'FOLDERIN'
     FOLDEROUT = 'FOLDEROUT'
-    DATABASE = 'DATABASE'
-    TESTE1 = 'TESTE1'
-    TESTE2 = 'TESTE2'
+    SERVERIP = 'SERVERIP'
+    PORT = 'PORT'
+    BDNAME = 'BDNAME'
+    USER = 'USER'
+    PASSWORD = 'PASSWORD'
 
     def initAlgorithm(self, config):
         """
@@ -81,14 +82,44 @@ class LoadToBPC(QgsProcessingAlgorithm):
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
-        db_param = QgsProcessingParameterString(
-            self.DATABASE,
-            self.tr('Selecione a conexão com o banco'))
-        db_param.setMetadata({
-            'widget_wrapper': {
-                'class': 'processing.gui.wrappers_postgis.ConnectionWidgetWrapper'}})
-        self.addParameter(db_param)
+        
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.SERVERIP,
+                self.tr('Insira o IP do computador')
+            )
+        )
 
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.PORT,
+                self.tr('Insira a porta')
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.BDNAME,
+                self.tr('Insira o nome do banco de dados'),
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.USER,
+                self.tr('Insira o usuário do PostgreSQL'),
+            )
+        )
+
+        password = QgsProcessingParameterString(
+            self.PASSWORD,
+            self.tr('Insira a senha do PostgreSQL'),
+        )
+        password.setMetadata({
+            'widget_wrapper':
+            'ferramentas_pto_controle.utils.wrapper.MyWidgetWrapper'})
+
+        self.addParameter(password)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -96,13 +127,20 @@ class LoadToBPC(QgsProcessingAlgorithm):
         """
         folder_in = self.parameterAsFile(parameters, self.FOLDERIN, context)
         folder_out = self.parameterAsFile(parameters, self.FOLDEROUT, context)
-        connection = self.parameterAsString(parameters, self.DATABASE, context)
+        server_ip = self.parameterAsString(parameters, self.SERVERIP, context)
+        port = self.parameterAsInt(parameters, self.PORT, context)
+        bdname = self.parameterAsString(parameters, self.BDNAME, context)
+        user = self.parameterAsString(parameters, self.USER, context)
+        password = self.parameterAsString(parameters, self.PASSWORD, context)
 
         handle = HandleLoadToBPC(folder_in, folder_out)
-        uri = postgis.uri_from_name(connection)
-        db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(uri.database(), uri.host(), uri.port(), uri.username(), uri.password())
+        where_clausule = handle.getWhereClausule()
 
-        process = 'ogr2ogr -f GPKG "{}\\geopkg.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(folder_out, db_string, where_clausule)
+        db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(
+            bdname, server_ip, port, user, password)
+
+        process = 'ogr2ogr -f GPKG "{}\\pontos_exportados.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(
+            folder_out, db_string, where_clausule)
         subprocess.run(process)
 
         return {self.OUTPUT: ''}
@@ -155,4 +193,3 @@ class LoadToBPC(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return LoadToBPC()
-

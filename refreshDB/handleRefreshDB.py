@@ -32,7 +32,6 @@ class HandleRefreshDB():
         conn_string = "host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(
             servidor, porta, nome_bd, usuario, senha)
         self.conn = psycopg2.connect(conn_string)
-        self.cursor = self.conn.cursor()
 
     def getPointsFromCSV(self):
         '''
@@ -78,20 +77,20 @@ class HandleRefreshDB():
                 else:
                     str_value += "DEFAULT,"
                 debug += '{} : {}\n'.format(key, value)
-            self.cursor.execute(u"""
-            INSERT INTO bpc.ponto_controle_p ({keys}, geom)
-            VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
-            ON CONFLICT (cod_ponto)
-            DO
-            UPDATE
-                SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
-                WHERE ponto_controle_p.cod_ponto = '{cod_ponto}' AND (
-                    ponto_controle_p.tipo_situacao = 1 OR ponto_controle_p.tipo_situacao = 2 OR ponto_controle_p.tipo_situacao = 4 OR ponto_controle_p.tipo_situacao = 9999);
-            """.format(keys=str_key[:-1], values=str_value[:-1], **point))
-            croqui, arq_rastreio, fotos = self.getAdditionalInfo(point)
-            self.cursor.execute(u'''
-            UPDATE bpc.ponto_controle_p SET (numero_fotos, possui_croqui, possui_arquivo_rastreio, tipo_situacao) = ({}, {}, {}, 2) WHERE cod_ponto = '{}'
-            '''.format(fotos, bool(croqui), bool(arq_rastreio), point['cod_ponto']))
+            with self.conn.cursor() as cursor:
+                cursor.execute(u"""
+                INSERT INTO bpc.ponto_controle_p ({keys}, geom)
+                VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
+                ON CONFLICT (cod_ponto)
+                DO
+                UPDATE
+                    SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
+                    WHERE tipo_situacao in (1,2,4,9999);
+                """.format(keys=str_key[:-1], values=str_value[:-1], **point))
+                croqui, arq_rastreio, fotos = self.getAdditionalInfo(point)
+                cursor.execute(u'''
+                UPDATE bpc.ponto_controle_p SET (numero_fotos, possui_croqui, possui_arquivo_rastreio, tipo_situacao, latitude, longitude) = ({}, {}, {}, 2, NULL, NULL) WHERE cod_ponto = '{}'
+                '''.format(fotos, bool(croqui), bool(arq_rastreio), point['cod_ponto']))
         self.conn.commit()
 
     def getAdditionalInfo(self, point):

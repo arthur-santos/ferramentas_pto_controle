@@ -64,6 +64,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
     FUSE = 'FUSE'
     IGN_PROC = 'IGN_PROC'
     FILE_DST = 'FILE_DST'
+    JSON = 'JSON'
 
     def initAlgorithm(self, config):
         """
@@ -116,6 +117,13 @@ class ValidatePoints(QgsProcessingAlgorithm):
                 defaultValue=False
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.JSON,
+                self.tr('Inserir JSON com parâmetros default e parâmetros de validação'),
+                extension='json'
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -128,9 +136,10 @@ class ValidatePoints(QgsProcessingAlgorithm):
         ign_proc = self.parameterAsBoolean(parameters, self.IGN_PROC, context)
         file_dst = self.parameterAsFileOutput(
             parameters, self.FILE_DST, context)
+        json = self.parameterAsString(parameters, self.JSON, context)
 
         evaluate = EvaluateStructure(
-            folder, operators, date, fuse, ign_proc)
+            folder, operators, date, fuse, ign_proc, json)
         results = evaluate.evaluate()
         with open(file_dst, 'w') as f:
             erros_text = "\n".join(results)

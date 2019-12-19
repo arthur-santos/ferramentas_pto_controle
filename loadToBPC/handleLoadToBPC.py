@@ -34,17 +34,17 @@ import csv
 import zipfile
 from pathlib import Path
 
+
 class HandleLoadToBPC():
 
     def __init__(self, folderin, folderout):
         self.folder = folderin
         self.output = folderout
 
-    def getPointsFromCSV(self):
+    def getWhereClausule(self):
         '''
         Reads points from CSV and prompts the generation of zipfile.
         Returns WHERE clausule in the end
-        !Maybe obsolete!
         '''
         points = ''
         for root, dirs, files in os.walk(self.folder):
@@ -62,7 +62,8 @@ class HandleLoadToBPC():
         Creates an expression generator to select folders with points, then
         checks the existence of PPP files and generates the zips
         '''
-        points = (x for x in root.iterdir() if Path(root / x / '1_Formato_Nativo').exists())
+        points = (x for x in root.iterdir() if Path(
+            root / x / '1_Formato_Nativo').exists())
         for point in points:
             name = point.name
             files = [
@@ -76,7 +77,8 @@ class HandleLoadToBPC():
                     files.append(child)
             if path_mono.exists():
                 files.append(path_mono)
-            zf = zipfile.ZipFile(Path(self.output, '{}.zip'.format(name)), 'w', zipfile.ZIP_DEFLATED)
+            zf = zipfile.ZipFile(
+                Path(self.output, '{}.zip'.format(name)), 'w', zipfile.ZIP_DEFLATED)
             for item in files:
                 if item.exists():
                     zf.write(item, item.relative_to(point))

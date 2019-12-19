@@ -7,8 +7,8 @@ CREATE TABLE dominios.tipo_situacao(
 );
 ALTER TABLE dominios.tipo_situacao OWNER TO postgres;
 
-INSERT INTO dominios.tipo_situacao (code, nome) VALUES (1, 'NÃ£o medido');
-INSERT INTO dominios.tipo_situacao (code, nome) VALUES (2, 'Aguardando revisÃ£o');
+INSERT INTO dominios.tipo_situacao (code, nome) VALUES (1, 'Não medido');
+INSERT INTO dominios.tipo_situacao (code, nome) VALUES (2, 'Aguardando revisão');
 INSERT INTO dominios.tipo_situacao (code, nome) VALUES (3, 'Aprovado');
 INSERT INTO dominios.tipo_situacao (code, nome) VALUES (4, 'Reprovado');
 INSERT INTO dominios.tipo_situacao (code, nome) VALUES (9999, 'A SER PREENCHIDO');
@@ -20,13 +20,13 @@ CREATE TABLE dominios.classificacao_ponto(
 ALTER TABLE dominios.classificacao_ponto OWNER TO postgres;
 
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (0, 'Desconhecido');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (1, 'Canto de edificaÃ§Ã£o');
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (1, 'Canto de edificação');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (2, 'Entroncamento de estrada');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (3, 'Cerca ou muro');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (4, 'Elemento identificÃ¡vel no solo');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (5, 'Elemento nÃ£o identificÃ¡vel no solo');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (6, 'Topo de vegetaÃ§Ã£o'); -- Teoricamente se encaixaria em 4 ou 5, ou existe algum ponto cuja base é uma árvore?
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (7, 'Abaixo de vegetaÃ§Ã£o');
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (4, 'Elemento identificável no solo');
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (5, 'Elemento não identificável no solo');
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (6, 'Topo de vegetação'); -- Teoricamente se encaixaria em 4 ou 5, ou existe algum ponto cuja base é uma árvore?
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (7, 'Abaixo de vegetação');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (9999, 'A SER PREENCHIDO'); --99 outros?
 
 CREATE TABLE dominios.tipo_ref (
@@ -36,10 +36,10 @@ CREATE TABLE dominios.tipo_ref (
 );
 ALTER TABLE dominios.tipo_ref OWNER TO postgres;
 
-INSERT INTO dominios.tipo_ref (code,code_name) VALUES (1,'AltimÃ©trico');
-INSERT INTO dominios.tipo_ref (code,code_name) VALUES (2,'PlanimÃ©trico');
-INSERT INTO dominios.tipo_ref (code,code_name) VALUES (3,'PlanialtimÃ©trico');
-INSERT INTO dominios.tipo_ref (code,code_name) VALUES (4,'GravimÃ©trico'); -- Será que vale a pena colocar gravimétrico? Para isso seria necessário uma medição comc gravímetro naquele ponto
+INSERT INTO dominios.tipo_ref (code,code_name) VALUES (1,'Altimétrico');
+INSERT INTO dominios.tipo_ref (code,code_name) VALUES (2,'Planimétrico');
+INSERT INTO dominios.tipo_ref (code,code_name) VALUES (3,'Planialtimétrico');
+INSERT INTO dominios.tipo_ref (code,code_name) VALUES (4,'Gravimétrico');
 INSERT INTO dominios.tipo_ref (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.sistema_geodesico (
@@ -52,9 +52,9 @@ ALTER TABLE dominios.sistema_geodesico OWNER TO postgres;
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (1,'SAD-69');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (2,'SIRGAS2000');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (3,'WGS-84');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (4,'CÃ³rrego Alegre');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (5,'Astro ChuÃ¡');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (6,'Outra referÃªncia');
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (4,'Córrego Alegre');
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (5,'Astro Chuá');
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (6,'Outra referência');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (7,'SAD-69 (96)'); --??
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
@@ -68,7 +68,7 @@ ALTER TABLE dominios.referencial_altim OWNER TO postgres;
 INSERT INTO dominios.referencial_altim (code,code_name) VALUES (1,'Torres');
 INSERT INTO dominios.referencial_altim (code,code_name) VALUES (2,'Imbituba');
 INSERT INTO dominios.referencial_altim (code,code_name) VALUES (3,'Santana');
-INSERT INTO dominios.referencial_altim (code,code_name) VALUES (99,'Outra referÃªncia');
+INSERT INTO dominios.referencial_altim (code,code_name) VALUES (99,'Outra referência');
 INSERT INTO dominios.referencial_altim (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.metodo_posicionamento (
@@ -80,9 +80,9 @@ ALTER TABLE dominios.metodo_posicionamento OWNER TO postgres;
 
 INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (1,'Posicionamento por ponto preciso (PPP)');
 INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (2,'Real Time Kinematic (RTK)');
-INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (3,'Semi-cinemÃ¡tico');
-INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (4,'Relativo EstÃ¡tico');
-INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (5,'Relativo Cinematico');
+INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (3,'Semi-cinemático');
+INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (4,'Relativo Estático');
+INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (5,'Relativo Cinemático');
 INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (6,'Absoluto');
 INSERT INTO dominios.metodo_posicionamento (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
@@ -104,8 +104,8 @@ CREATE TABLE dominios.referencia_medicao_altura (
 );
 ALTER TABLE dominios.referencia_medicao_altura OWNER TO postgres;
 
-INSERT INTO dominios.referencia_medicao_altura (code,code_name) VALUES (1,'Nivel do solo');
-INSERT INTO dominios.referencia_medicao_altura (code,code_name) VALUES (2,'NÃ­vel do objeto');
+INSERT INTO dominios.referencia_medicao_altura (code,code_name) VALUES (1,'Nível do solo');
+INSERT INTO dominios.referencia_medicao_altura (code,code_name) VALUES (2,'Nível do objeto');
 INSERT INTO dominios.referencia_medicao_altura (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.orbita (
@@ -115,9 +115,9 @@ CREATE TABLE dominios.orbita (
 );
 ALTER TABLE dominios.orbita OWNER TO postgres;
 
-INSERT INTO dominios.orbita (code,code_name) VALUES (1,'Ultra RÃ¡pida (predita)');
-INSERT INTO dominios.orbita (code,code_name) VALUES (2,'Ultra RÃ¡pida (observada)');
-INSERT INTO dominios.orbita (code,code_name) VALUES (3,'RÃ¡pida');
+INSERT INTO dominios.orbita (code,code_name) VALUES (1,'Ultra Rápida (predita)');
+INSERT INTO dominios.orbita (code,code_name) VALUES (2,'Ultra Rápida (observada)');
+INSERT INTO dominios.orbita (code,code_name) VALUES (3,'Rápida');
 INSERT INTO dominios.orbita (code,code_name) VALUES (4,'Final');
 INSERT INTO dominios.orbita (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
@@ -129,14 +129,14 @@ CREATE TABLE dominios.tipo_pto_ref_geod_topo (
 ALTER TABLE dominios.tipo_pto_ref_geod_topo OWNER TO postgres;
 
 INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (0,'Desconhecido');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (1,'VÃ©rtice de triangulaÃ§Ã£o - VT');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (2,'ReferÃªncia de nÃ­vel - RN');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (3,'EstaÃ§Ã£o gravimÃ©trica - EG');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (4,'EstaÃ§Ã£o de poligonal - EP');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (5,'Ponto astronÃ´mico - PA');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (6,'Ponto baromÃ©trico - B');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (7,'Ponto trigonomÃ©trico - RV');
-INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (8,'Ponto de satÃ©lite - SAT');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (1,'Vértice de triangulação - VT');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (2,'Referência de nível - RN');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (3,'Estação gravimétrica - EG');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (4,'Estação de poligonal - EP');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (5,'Ponto astronômico - PA');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (6,'Ponto barométrico - B');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (7,'Ponto trigonométrico - RV');
+INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (8,'Ponto de satélite - SAT');
 INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (99,'Outros');
 INSERT INTO dominios.tipo_pto_ref_geod_topo (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
@@ -182,7 +182,7 @@ INSERT INTO dominios.referencial_grav (code,code_name) VALUES (2,'IGSN71');
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (3,'Absoluto');
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (4,'Local');
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (5,'RGFB');
-INSERT INTO dominios.referencial_grav (code,code_name) VALUES (97,'NÃ£o aplicÃ¡vel');
+INSERT INTO dominios.referencial_grav (code,code_name) VALUES (97,'Não aplicável');
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.situacao_marco (
@@ -194,12 +194,12 @@ ALTER TABLE dominios.situacao_marco OWNER TO postgres;
 
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (0,'Desconhecida');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (1,'Bom');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (2,'DestruÃ­do');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (3,'DestruÃ­do sem chapa');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (4,'DestruÃ­do com chapa danificada'); --Itens 3 e 4 são especializações de 2
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (5,'NÃ£o encontrado');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (6,'NÃ£o visitado');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (7,'NÃ£o construÃ­do');
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (2,'Destruído');
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (3,'Destruído sem chapa');
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (4,'Destruí­do com chapa danificada'); --Itens 3 e 4 são especializações de 2
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (5,'Não encontrado');
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (6,'Não visitado');
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (7,'Não construí­do');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.insumo_medicao (
@@ -209,8 +209,8 @@ CREATE TABLE dominios.insumo_medicao (
 );
 ALTER TABLE dominios.insumo_medicao OWNER TO postgres;
 
-INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (1,'AerotriangulaÃ§Ã£o');
-INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (2,'Carta TopogrÃ¡fica');
+INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (1,'Aerotriangulação');
+INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (2,'Carta Topográfica');
 INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (3,'Ortoimagem');
 INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 

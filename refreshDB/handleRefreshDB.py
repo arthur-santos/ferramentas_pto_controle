@@ -21,17 +21,20 @@ import os
 import sys
 import csv
 import re
+import json
+from pathlib import Path
 import psycopg2
 import pyproj
-from pathlib import Path
 
 
 class HandleRefreshDB():
-    def __init__(self, pasta, servidor, porta, nome_bd, usuario, senha):
+    def __init__(self, pasta, servidor, porta, nome_bd, usuario, senha, json_file):
         self.pasta = Path(pasta)
         conn_string = "host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(
             servidor, porta, nome_bd, usuario, senha)
         self.conn = psycopg2.connect(conn_string)
+        with open(json_file) as setting:
+            self.defaults = json.load(setting)['default']
 
     def getPointsFromCSV(self):
         '''
@@ -44,7 +47,8 @@ class HandleRefreshDB():
                     with open(os.path.join(root, f)) as csv_file:
                         csv_reader = csv.DictReader(csv_file)
                         for row in csv_reader:
-                            points.append(row)
+                            # Inserts the defaults from JSON
+                            points.append(self.getDefaults(row))
         return createTimeStamp(points)
 
     def getCoordsFromRinex(self, points):
@@ -99,6 +103,13 @@ class HandleRefreshDB():
         fotos = [x for x in self.pasta.rglob('*') if x.is_file() and x.parent.name == '3_Foto_Rastreio' and x.match('{}*.jpg'.format(point['cod_ponto']))]
         return len(croqui), len(arq_rastreio), len(fotos)
 
+    def getDefaults(self, row):
+        to_update = set(self.defaults.keys()).difference(row)
+        for item in to_update:
+            row.update({item : self.defaults[item]})
+        return row
+
+
 def createTimeStamp(points):
     for point in points:
         point['inicio_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['inicio_rastreio'], point['fuso_horario'])
@@ -116,7 +127,7 @@ def transform(x, y, z):
 if __name__ == '__main__':
     atualiza_db = HandleRefreshDB(sys.argv[1], sys.argv[2],
                                   sys.argv[3], sys.argv[4],
-                                  sys.argv[5], sys.argv[6])
+                                  sys.argv[5], sys.argv[6], sys.argv[7])
     values = atualiza_db.getPointsFromCSV()
     points2 = atualiza_db.getCoordsFromRinex(values)
     atualiza_db.upsert(points2)

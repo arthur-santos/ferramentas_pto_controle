@@ -30,16 +30,13 @@ __copyright__ = '(C) 2019 by 1CGEO/DSG'
 __revision__ = '$Format:%H$'
 
 import re
+import json
 from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterFileDestination,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+                       QgsProcessingParameterBoolean)
 from qgis.PyQt.QtCore import QCoreApplication
 from .evaluateStructure import EvaluateStructure
 
@@ -117,13 +114,13 @@ class ValidatePoints(QgsProcessingAlgorithm):
                 defaultValue=False
             )
         )
-        self.addParameter(
-            QgsProcessingParameterFile(
-                self.JSON,
-                self.tr('Inserir JSON com parâmetros default e parâmetros de validação'),
-                extension='json'
-            )
+
+        json_file = ValidationJSON(
+            self.JSON,
+            self.tr('Inserir JSON com parâmetros default e parâmetros de validação'),
+            extension='json'
         )
+        self.addParameter(json_file)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -136,10 +133,10 @@ class ValidatePoints(QgsProcessingAlgorithm):
         ign_proc = self.parameterAsBoolean(parameters, self.IGN_PROC, context)
         file_dst = self.parameterAsFileOutput(
             parameters, self.FILE_DST, context)
-        json = self.parameterAsString(parameters, self.JSON, context)
+        json_file = self.parameterAsFile(parameters, self.JSON, context)
 
         evaluate = EvaluateStructure(
-            folder, operators, date, fuse, ign_proc, json)
+            folder, operators, date, fuse, ign_proc, json_file)
         results = evaluate.evaluate()
         with open(file_dst, 'w') as f:
             erros_text = "\n".join(results)
@@ -207,7 +204,8 @@ class ValidationString(QgsProcessingParameterString):
     '''
     Auxiliary class for pre validation on measurer's names.
     '''
-    #__init__ not necessary
+    # __init__ not necessary
+
     def __init__(self, name, description=''):
         super().__init__(name, description)
 
@@ -215,14 +213,32 @@ class ValidationString(QgsProcessingParameterString):
         if re.match(r'([a-z]+)(?:;|$)', value):
             return True
 
+
 class ValidationDate(QgsProcessingParameterString):
     '''
-    Auxiliary class for pre validation on measurer's names.
+    Auxiliary class for pre validation on dates.
     '''
-    #__init__ not necessary
+    # __init__ not necessary
+
     def __init__(self, name, description=''):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
         if re.match(r'20\d\d-[01][1-9]-[0-3]\d', value):
             return True
+
+
+class ValidationJSON(QgsProcessingParameterFile):
+    '''
+    Auxiliary class for pre validation on dates.
+    '''
+
+    def checkValueIsAcceptable(self, value, context=None):
+        try:
+            with open(value) as json_file:
+                _tmp = json.load(json_file)
+                [_v1, _v2, _v3, _v4] = [_tmp['validacao']['alt_max_ant'], _tmp['validacao']
+                                        ['dur_min'], _tmp['validacao']['modelo_gps'], _tmp['validacao']['modelo_antena']]
+        except (OSError, IOError, KeyError):
+            return False
+        return True

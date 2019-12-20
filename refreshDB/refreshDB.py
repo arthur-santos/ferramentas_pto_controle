@@ -27,12 +27,10 @@ __copyright__ = '(C) 2019 by 1CGEO/DSG'
 __revision__ = '$Format:%H$'
 
 from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterString,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
 from .handleRefreshDB import HandleRefreshDB
 
@@ -53,6 +51,7 @@ class RefreshDB(QgsProcessingAlgorithm):
 
     OUTPUT = 'OUTPUT'
     FOLDER = 'FOLDER'
+    JSON = 'JSON'
     SERVERIP = 'SERVERIP'
     PORT = 'PORT'
     BDNAME = 'BDNAME'
@@ -69,6 +68,13 @@ class RefreshDB(QgsProcessingAlgorithm):
                 self.FOLDER,
                 self.tr('Selecionar a pasta'),
                 behavior=QgsProcessingParameterFile.Folder
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.JSON,
+                self.tr('Selecionar o arquivo JSON'),
+                extension='json'
             )
         )
 
@@ -120,8 +126,9 @@ class RefreshDB(QgsProcessingAlgorithm):
         bdname = self.parameterAsString(parameters, self.BDNAME, context)
         user = self.parameterAsString(parameters, self.USER, context)
         password = self.parameterAsString(parameters, self.PASSWORD, context)
+        json = self.parameterAsFile(parameters, self.JSON, context)
 
-        refresh = HandleRefreshDB(folder, server_ip, port, bdname, user, password)
+        refresh = HandleRefreshDB(folder, server_ip, port, bdname, user, password, json)
         points = refresh.getPointsFromCSV()
         points2 = refresh.getCoordsFromRinex(points)
         refresh.upsert(points2)
@@ -176,7 +183,6 @@ class RefreshDB(QgsProcessingAlgorithm):
         - Usuário do PostgreSQL
         - Senha do PostgreSQL
         Caso já exista um banco de dados com o mesmo nome a ferramenta não irá sobrescrevê-lo.''')
-        
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)

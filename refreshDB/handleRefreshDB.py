@@ -89,7 +89,7 @@ class HandleRefreshDB():
                 DO
                 UPDATE
                     SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
-                    WHERE tipo_situacao in (1,2,4,9999);
+                    WHERE ponto_controle_p.tipo_situacao in (1,2,4,9999);
                 """.format(keys=str_key[:-1], values=str_value[:-1], **point))
                 croqui, arq_rastreio, fotos = self.getAdditionalInfo(point)
                 cursor.execute(u'''

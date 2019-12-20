@@ -21,7 +21,7 @@ Esta rotina verifica se a pasta definida atende as padronizações determinadas 
 
 ### Execução
 A rotina possui os seguintes parâmetros:
-* *pasta dos pontos de controle*: Pasta com a estrutura de pontos de controle
+* *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
 * *operadores*: Nome dos operadores separados por ;
 * *data*: Data de realização da medição, no formato YYYY-MM-DD
 * *fuso horário*: Fuso horário dos tempos informados
@@ -56,6 +56,7 @@ Os seguintes atributos do objeto **validacao** *precisam* ser definidos para uma
 
 Os seguintes atributos do objeto **default** podem ser pré-definidos para compartilhar informações comuns aos pontos. Os seguintes atributos podem ser definidos:
 Atributo | Atributo no JSON
+| ------ | ------ |
 Modelo do GPS | modelo_gps
 Modelo da antena | modelo_antena
 Tipo de referência | tipo_ref (*)
@@ -102,7 +103,7 @@ Verifique o preenchimento do objeto __default__ no arquivo JSON antes de executa
 
 ### Execução
 Os parâmetros necessários são:
-- *pasta dos pontos de controle*: Pasta com a estrutura de pontos de controle
+- *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
 - *IP da máquina* (se trabalhando localmente utilizar localhost)
 - *Porta* (geralmente 5432 para PostgreSQL)
 - *Nome* do banco de pontos de controle
@@ -111,13 +112,32 @@ Os parâmetros necessários são:
 - *JSON* (o mesmo utilizado na ferramenta anterior)
 
 ## 4- Preparar para PPP
+Esta rotina cria a pasta 6_Processamento_PPP na estrutura de pastas e compacta os arquivos RINEX no formato zip.
+
+### Execução
+Os parâmetros necessários são:
+- *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
 
 ## 5- PPP
 
 ## 6- Procedimento pós PPP
+Esta rotina descompacta os arquivos PPP no formato zip e distribui os arquivos na estrutura padrão de pastas de ponto de controle.
+Os parâmetros necessários são:
+- *Pasta com a estrutura de pontos de controle*
+- *Pasta com os arquivos PPP no formato zip* : Pasta que possui os arquivos gerados pelo processamento PPP (gerados pela ferramenta 5- PPP)
+
 
 ## 7- Atualizar o banco com resultados do PPP
 
 ## 8- Gerar monografias
 
-## Preparar insumos para carregamento no BPC
+## 9- Preparar insumos para carregamento no BPC
+Esta rotina gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage o(s) arquivo(s) zipados.
+Note que é necessário a execução da rotina 8- Gerar monografias, uma vez que a monografia é necessária no zip a ser gerado.
+Os parâmetros necessários são:
+- *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
+- *IP da máquina* (se trabalhando localmente utilizar localhost)
+- *Porta* (geralmente 5432 para PostgreSQL)
+- *Nome* do banco de pontos de controle
+- *Usuário* do PostgreSQL
+- *Senha* do PostgreSQL

@@ -112,6 +112,10 @@ class HandleRefreshDB():
 
 def createTimeStamp(points):
     for point in points:
+        try:
+            fuso = point['fuso_horario']
+        except KeyError:
+            point['fuso_horario'] = -3
         point['inicio_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['inicio_rastreio'], point['fuso_horario'])
         point['fim_rastreio'] = '{} {} {}'.format(point['data_rastreio'], point['fim_rastreio'], point['fuso_horario'])
         point['altura_antena'] = point['altura_antena'].replace(',', '.')

@@ -20,14 +20,14 @@ reference:
 import os
 from re import search
 import zipfile
-import sys
 import shutil
 
 
 def extraiZip(zip, estrutura):
-    zip_ref = zipfile.ZipFile(zip, 'r')
-    zip_ref.extractall(estrutura)
-    zip_ref.close()
+    for item in os.listdir(estrutura):
+        os.remove(os.path.join(estrutura, item))
+    with zipfile.ZipFile(zip, 'r') as zip_ref:
+        zip_ref.extractall(estrutura)
     if len(os.listdir(estrutura)) == 1:
         source = os.path.join(estrutura, os.listdir(estrutura)[0])
         if os.path.isdir(source):

@@ -119,17 +119,20 @@ Os parâmetros necessários são:
 - *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
 
 ## 5- PPP
+Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
 
 ## 6- Procedimento pós PPP
 Esta rotina descompacta os arquivos PPP no formato zip e distribui os arquivos na estrutura padrão de pastas de ponto de controle.
+Os arquivos que da pasta 6_Processamento_PPP serão deletados e substituídos pelos novos arquivos contidos no zip
 Os parâmetros necessários são:
 - *Pasta com a estrutura de pontos de controle*
 - *Pasta com os arquivos PPP no formato zip* : Pasta que possui os arquivos gerados pelo processamento PPP (gerados pela ferramenta 5- PPP)
 
-
 ## 7- Atualizar o banco com resultados do PPP
+Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
 
 ## 8- Gerar monografias
+Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
 
 ## 9- Preparar insumos para carregamento no BPC
 Esta rotina gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage o(s) arquivo(s) zipados.

@@ -1,7 +1,7 @@
 # Conjunto de ferramentas para medição
 Conjunto de ferramentas em Python que automatizam parte do processo de processamento e controle de qualidade da medição de pontos de controle.
 As ferramentas estão disponibilizadas como *processing*, logo não se esqueça de ativar a aba processing do QGIS!
-Para funcionalidade completa, deverá ser utilizado com o repositório localizado em https://github.com/1cgeo/ferramentas_pto_controle_2.
+Para funcionalidade completa, deverá ser utilizado com o repositório localizado em https://github.com/1cgeo/rotinas_complementares_pto_controle.
 
 ## Instalação
 Realize o download deste repositório e o extraia na pasta de plugins do QGIS, geralmente situada em (windows) C:\Users\user\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins
@@ -121,7 +121,7 @@ Os parâmetros necessários são:
 - *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
 
 ## 5- PPP
-Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
+Disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle
 
 ## 6- Procedimento pós PPP
 Esta rotina descompacta os arquivos PPP no formato zip e distribui os arquivos na estrutura padrão de pastas de ponto de controle.
@@ -131,10 +131,10 @@ Os parâmetros necessários são:
 - *Pasta com os arquivos PPP no formato zip* : Pasta que possui os arquivos gerados pelo processamento PPP (gerados pela ferramenta 5- PPP)
 
 ## 7- Atualizar o banco com resultados do PPP
-Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
+Disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle
 
 ## 8- Gerar monografias
-Disponível em (https://github.com/1cgeo/ferramentas_pto_controle_2)
+Disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle
 
 ## 9- Preparar insumos para carregamento no BPC
 Esta rotina gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage, e o(s) arquivo(s) zipados.

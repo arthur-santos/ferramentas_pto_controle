@@ -82,7 +82,7 @@ Modelo geoidal | modelo_geoidal (*)
 Órgão executante | orgao_executante
 Projeto | projeto
 Engenheiro responsável | engenheiro_responsavel
-CREA do engenheiro responsável | engenheiro_responsavel
+CREA do engenheiro responsável | crea_engenheiro_responsavel
 Geometria aproximada | geometria_aproximada (True ou False)
 Tipo de referência geodésica | tipo_pto_ref_geod_topo (*)
 Rede de referência | rede_referencia (*)

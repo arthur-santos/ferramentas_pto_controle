@@ -462,19 +462,9 @@ class EvaluateStructure():
     def compare_csv_rinex(self, pasta):
         erros = []
         for key in self.rinex_data:
-            try:
-                if self.rinex_data[key]['modelo_receptor'] != self.rules['validacao']['modelo_gps']:
-                    erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o modelo incorreto do receptor (deveria ser {2})".format(
-                        pasta, self.rinex_data[key]["cod_ponto_1"], self.rules['validacao']['modelo_gps']))
-                if self.rinex_data[key]['modelo_antena'] != self.rules['validacao']['modelo_antena']:
-                    erros.append(u"{0}: O arquivo RINEX do ponto {1} está com o modelo incorreto de antena (deveria ser {2})".format(
-                        pasta, self.rinex_data[key]["cod_ponto_1"], self.rules['validacao']['modelo_antena']))
-                if self.rinex_data[key]['modelo_none']:
-                    erros.append(u"{0}: O arquivo RINEX do ponto {1} contém NONE no modelo da antena.".format(
-                        pasta, self.rinex_data[key]["cod_ponto_1"]))
-            except KeyError:
-                raise KeyError(
-                    'Verifique a consistência do arquivo JSON e a existência dos atributos modelo_gps e modelo_antena no objeto validacao')
+            if self.rinex_data[key]['modelo_none']:
+                erros.append(u"{0}: O arquivo RINEX do ponto {1} contém NONE no modelo da antena.".format(
+                    pasta, self.rinex_data[key]["cod_ponto_1"]))
 
         for key in self.csv_data:
             if key in self.rinex_data:

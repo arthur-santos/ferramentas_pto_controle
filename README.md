@@ -33,9 +33,7 @@ A rotina possui os seguintes parâmetros:
 {
     "validacao": {
         "alt_max_ant" : 9,
-        "dur_min" : 38,
-        "modelo_gps" : "TRIMBLE 5700II",
-        "modelo_antena" : "TRM39105.00"
+        "dur_min" : 38
     },
 
     "default": {
@@ -52,8 +50,6 @@ A rotina possui os seguintes parâmetros:
 Os seguintes atributos do objeto **validacao** *precisam* ser definidos para uma validação completa da estrutura de pastas:
 - Altura máxima da antena: alt_max_ant
 - Duração mínima do rastreio: dur_min
-- Modelo do GPS:  modelo_gps
-- Modelo da antena: modelo_antena
 
 Os seguintes atributos do objeto **default** podem ser pré-definidos para compartilhar informações comuns aos pontos. Os seguintes atributos podem ser definidos:
 

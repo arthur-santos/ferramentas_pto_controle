@@ -71,7 +71,7 @@ class HandleLoadToBPC():
                 point / '2_RINEX' / '{}.zip'.format(name)
             ]
             path_ppp = point / '6_Processamento_PPP'
-            path_mono = point / '{}.pdf'.format(point)
+            path_mono = point / '8_Monografia' / '{}.pdf'.format(point)
             for child in path_ppp.iterdir():
                 if child.suffix == '.pdf':
                     files.append(child)

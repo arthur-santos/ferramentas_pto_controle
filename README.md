@@ -133,14 +133,22 @@ Os parâmetros necessários são:
 ## 7- Atualizar o banco com resultados do PPP
 Disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle
 
-## 8- Gerar monografias
+## 8- Distribuir as imagens aéreas na estrutura de pastas
+Esta rotina distribui as imagens aéreas na estrutura de pastas. Para gerar imagens aéreas verificar tutorial disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle. As imagens deverão estara em formato jpg e seu nome deverá coincidir com o nome do ponto (Ex: RS-HV-3452.jpg) Os parâmetros necessários são:
+- *Pasta com a(s) estrutura(s) de pasta*
+- *Pasta com as imagens aéreas*
+- *Pasta com as imagens aéreas nível município*
+- *Pasta com as imagens aéreas nível estado*
+
+## 9- Gerar monografias
 Disponível em https://github.com/1cgeo/rotinas_complementares_pto_controle
 
-## 9- Preparar insumos para carregamento no BPC
+## 10- Preparar insumos para carregamento no BPC
 Esta rotina gera os insumos necessários para carregamento no BPC: o arquivo GeoPackage, e o(s) arquivo(s) zipados.
 Note que é necessário a execução da rotina 8- Gerar monografias, uma vez que a monografia é necessária no zip a ser gerado.
 Os parâmetros necessários são:
 - *pasta da estrutura de pontos de controle*: Pasta com a estrutura de pontos de controle
+- *pasta de destino*: Pasta naa qual o Geopackage e os arquivos zipados serão extraídos
 - *IP da máquina* (se trabalhando localmente utilizar localhost)
 - *Porta* (geralmente 5432 para PostgreSQL)
 - *Nome* do banco de pontos de controle

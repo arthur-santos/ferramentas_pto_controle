@@ -37,7 +37,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterField,
                        QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
-from .handleDistributeImages import *
+from .handleDistributeImages import HandleDistributeImages
 
 
 class DistributeImages(QgsProcessingAlgorithm):
@@ -58,7 +58,8 @@ class DistributeImages(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDERIN,
-                self.tr('Selecione a pasta com a(s) estrutura(s) de pontos de controle'),
+                self.tr(
+                    'Selecione a pasta com a(s) estrutura(s) de pontos de controle'),
                 behavior=QgsProcessingParameterFile.Folder
             )
         )
@@ -92,19 +93,18 @@ class DistributeImages(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         folder_in = self.parameterAsFile(parameters, self.FOLDERIN, context)
-        folder_aerview = self.parameterAsFile(parameters, self.FOLDERAERVIEW, context)
-        folder_view1 = self.parameterAsString(parameters, self.FOLDERVIEW1, context)
-        folder_view2 = self.parameterAsInt(parameters, self.FOLDERVIEW2, context)
+        folder_aerview = self.parameterAsFile(
+            parameters, self.FOLDERAERVIEW, context)
+        folder_view1 = self.parameterAsString(
+            parameters, self.FOLDERVIEW1, context)
+        folder_view2 = self.parameterAsInt(
+            parameters, self.FOLDERVIEW2, context)
 
-        handle = HandleDistributeImages(folder_in, folder_aerview, folder_view1, folder_view2)
-        where_clausule = handle.getWhereClausule()
+        handle = HandleDistributeImages(
+            folder_in, folder_aerview, folder_view1, folder_view2)
 
-        db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(
-            bdname, server_ip, port, user, password)
-
-        process = 'ogr2ogr -f GPKG "{}\\pontos_exportados.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(
-            folder_out, db_string, where_clausule)
-        subprocess.run(process)
+        handle.create_folder()
+        handle.distribute_images()
 
         return {self.OUTPUT: ''}
 

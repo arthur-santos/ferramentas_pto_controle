@@ -237,8 +237,8 @@ class ValidationJSON(QgsProcessingParameterFile):
         try:
             with open(value) as json_file:
                 _tmp = json.load(json_file)
-                [_v1, _v2, _v3, _v4] = [_tmp['validacao']['alt_max_ant'], _tmp['validacao']
-                                        ['dur_min'], _tmp['validacao']['modelo_gps'], _tmp['validacao']['modelo_antena']]
+                [_v1, _v2] = [_tmp['validacao']['alt_max_ant'], _tmp['validacao']
+                                        ['dur_min']]
         except (OSError, IOError, KeyError):
             return False
         return True

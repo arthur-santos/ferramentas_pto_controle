@@ -4,21 +4,19 @@ import sys
 import shutil
 
 
-class HandleDistrubuteImages():
+class HandleDistributeImages():
 
-    def __init__(self, structure, folder_aer_view='teste', folder_view1='teste', folder_view2='tste'):
+    def __init__(self, structure, folder_aer_view, folder_view1, folder_view2):
         self.folders = []
-        self.structure = structure
-        self.aer_view = folder_aer_view
-        self.view1 = folder_view1
-        self.view2 = folder_view2
+        self.structure = Path(structure)
+        self.aer_view = Path(folder_aer_view)
+        self.view1 = Path(folder_view1)
+        self.view2 = Path(folder_view2)
 
     def create_folder(self):
-        path = Path(self.structure)
-        self.folders = [x for x in path.rglob(
+        self.folders = [x for x in self.structure.rglob(
             '*') if x.is_dir() and re.match(r'\w\w-\w\w-0*\d+', x.parts[-1])]
         for folder in self.folders:
-            self.folders.append(folder.parts[-1])
             Path(folder / '7_Imagens_Monografia').mkdir(exist_ok=True)
 
     def distribute_images(self):
@@ -31,11 +29,11 @@ class HandleDistrubuteImages():
                     folder / '7_Imagens_Monografia' / f'{point}_MUNICIPIO.jpg'))
                 shutil.copy(str(Path(self.view2 / f'{point}.jpg')), str(
                     folder / '7_Imagens_Monografia' / f'{point}_ESTADO.jpg'))
-            except IOError:
-                print(
-                    'Verifique se todas as vistas aéreas foram corretamente geradas no formato jpg')
+            except IOError as err:
+                print(err)
 
 
 if __name__ == "__main__":
-    handle = HandleDistrubuteImages(sys.argv[1])
+    handle = HandleDistributeImages(*sys.argv[1:])
     handle.create_folder()
+    handle.distribute_images()

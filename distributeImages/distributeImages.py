@@ -49,6 +49,7 @@ class DistributeImages(QgsProcessingAlgorithm):
     FOLDERAERVIEW = 'FOLDERAERVIEW'
     FOLDERVIEW1 = 'FOLDERVIEW1'
     FOLDERVIEW2 = 'FOLDERVIEW2'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -93,12 +94,9 @@ class DistributeImages(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         folder_in = self.parameterAsFile(parameters, self.FOLDERIN, context)
-        folder_aerview = self.parameterAsFile(
-            parameters, self.FOLDERAERVIEW, context)
-        folder_view1 = self.parameterAsString(
-            parameters, self.FOLDERVIEW1, context)
-        folder_view2 = self.parameterAsInt(
-            parameters, self.FOLDERVIEW2, context)
+        folder_aerview = self.parameterAsFile(parameters, self.FOLDERAERVIEW, context)
+        folder_view1 = self.parameterAsFile(parameters, self.FOLDERVIEW1, context)
+        folder_view2 = self.parameterAsFile(parameters, self.FOLDERVIEW2, context)
 
         handle = HandleDistributeImages(
             folder_in, folder_aerview, folder_view1, folder_view2)

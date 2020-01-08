@@ -190,6 +190,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         - Nome dos medidores separados por ; (não inserir espaços)
         - Data (no formato YYYY-MM-DD. Exemplo: 2019-08-30)
         - Fuso horário da região (geralmente -3)
+        - JSON com parâmetros de validação (verificar README em https://github.com/1cgeo/ferramentas_pto_controle para mais detalhes)
         - O arquivo no qual será escrito os problemas de validação
         ''')
 

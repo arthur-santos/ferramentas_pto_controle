@@ -84,11 +84,11 @@ class HandleRefreshDB():
             with self.conn.cursor() as cursor:
                 cursor.execute(u"""
                 INSERT INTO bpc.ponto_controle_p ({keys}, geom)
-                VALUES ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
+                VALUES ({values}, ST_GeomFromText('POINT({longitude} {latitude})', 4674))
                 ON CONFLICT (cod_ponto)
                 DO
                 UPDATE
-                    SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({latitude} {longitude})', 4674))
+                    SET ({keys}, geom) = ({values}, ST_GeomFromText('POINT({longitude} {latitude})', 4674))
                     WHERE ponto_controle_p.tipo_situacao in (1,2,4,9999);
                 """.format(keys=str_key[:-1], values=str_value[:-1], **point))
                 croqui, arq_rastreio, fotos = self.getAdditionalInfo(point)

@@ -21,6 +21,7 @@ import os
 from re import search
 import zipfile
 import shutil
+import 
 
 
 def extraiZip(zip, estrutura):
@@ -43,10 +44,10 @@ def organizePPP(estrutura_pasta, pasta_ppp):
         os.path.join(pasta_ppp, f)) and f.endswith('.zip') and len(f.split("_")) == 4 and search(pto_regex, f.split("_")[1][:-4])}
     ptos_estrutura = {}
     for root, dirs, files in os.walk(estrutura_pasta):
-        if search(pto_regex, root.split('\\')[-1]):
+        rootname = Path(root).parts
+        if search(pto_regex, rootname[-1]):
             if "6_Processamento_PPP" in dirs:
-                ptos_estrutura[root.split(
-                    '\\')[-1]] = os.path.join(root, "6_Processamento_PPP")
+                ptos_estrutura[rootname[-1]] = os.path.join(root, "6_Processamento_PPP")
 
     for zip_pto in zipfiles:
         if zip_pto in ptos_estrutura:

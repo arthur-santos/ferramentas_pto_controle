@@ -157,6 +157,7 @@ class CreateDatabase(QgsProcessingAlgorithm):
         """
         return self.tr('''
         Esta ferramenta irá criar o banco de dados de pontos de controle necessário para a gerência do projeto.
+        Certifique-se que o usuário utilizado possui permissão para criar bancos!
         Os parâmetros necessários são:
         - IP da máquina (se trabalhando localmente utilizar localhost)
         - Porta (geralmente 5432 para PostgreSQL)

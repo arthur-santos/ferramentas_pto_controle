@@ -184,7 +184,7 @@ class ValidatePoints(QgsProcessingAlgorithm):
         """
         return self.tr('''
         Esta ferramenta checará a consistência dos arquivos gerados pela medição e sua correta disposição nas pastas.
-        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão, disponível em XXXXXX.
+        Para o correto funcionamento da validação é indispensável que as pastas sigam o modelo padrão.
         Os parâmetros necessários são:
         - Pasta com a estrutura de pontos de controle
         - Nome dos medidores separados por ; (não inserir espaços)

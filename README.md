@@ -8,6 +8,7 @@ Realize o download deste repositório e o extraia na pasta de plugins do QGIS, g
 
 ## 1- Criar banco de dados
 Esta ferramenta cria o banco de dados de pontos de controle necessário para a gerência do projeto.
+Certifique-se que o usuário utilizado possui permissão para criar bancos no PostGgreSQL!
 Os parâmetros necessários são:
 - *IP da máquina* (se trabalhando localmente utilizar localhost)
 - *Porta* (geralmente 5432 para PostgreSQL)

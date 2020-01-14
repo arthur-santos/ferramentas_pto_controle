@@ -20,8 +20,7 @@ reference:
 import os
 from re import search
 import zipfile
-import shutil
-import 
+from pathlib import Path
 
 
 def extraiZip(zip, estrutura):

@@ -1,14 +1,14 @@
 # Conjunto de ferramentas para medição
-Conjunto de ferramentas em Python que automatizam parte do processo de processamento e controle de qualidade da medição de pontos de controle.
+Conjunto de ferramentas em Python que automatizam o processamento e controle de qualidade da medição de pontos de controle.
 As ferramentas estão disponibilizadas como *processing*, logo não se esqueça de ativar a aba processing do QGIS!
 Para funcionalidade completa, deverá ser utilizado com o repositório localizado em https://github.com/1cgeo/rotinas_complementares_pto_controle.
 
 ## Instalação
-Realize o download deste repositório e o extraia na pasta de plugins do QGIS, geralmente situada em (windows) C:\Users\user\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins
+Realize o download deste repositório e o extraia na pasta de plugins do QGIS, geralmente situada em (windows) C:\Users\$(user)\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins
 
 ## 1- Criar banco de dados
 Esta ferramenta cria o banco de dados de pontos de controle necessário para a gerência do projeto.
-Certifique-se que o usuário utilizado possui permissão para criar bancos no PostGgreSQL!
+Certifique-se que o usuário utilizado possui permissão para criar e alterar bancos no PostGgreSQL!
 Os parâmetros necessários são:
 - *IP da máquina* (se trabalhando localmente utilizar localhost)
 - *Porta* (geralmente 5432 para PostgreSQL)
@@ -95,7 +95,7 @@ Notas:
 ## 3- Atualiza banco de dados de controle
 Esta rotina busca na pasta definida e nas suas subpastas pelos arquivos .CSV padrão de medição e atualiza o banco de dados de pontos de controle.
 
-Todos os campos do CSV e todos os atributos definidos no campo _default_ do JSON serão utilizados. Caso o mesmo atributo exista no JSON e no CSV, a prioridade será do CSV. O campo *tipo_situacao_id* será atualizado com o valor 4 (Aguardando avaliação).
+Todos os campos do CSV e todos os atributos definidos pelo usuário no campo _default_ do JSON serão utilizados. Caso o mesmo atributo exista no JSON e no CSV, a prioridade será do CSV. O campo *tipo_situacao_id* será atualizado com o valor 4 (Aguardando avaliação).
 
 É essencial que seja executada a rotina **2- Valida estrutura de pontos de controle** antes da execução desta rotina.
 Verifique o preenchimento do objeto __default__ no arquivo JSON antes de executar esta rotina

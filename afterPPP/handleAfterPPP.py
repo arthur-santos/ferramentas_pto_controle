@@ -21,11 +21,16 @@ import os
 from re import search
 import zipfile
 from pathlib import Path
-
+import shutil
+import sys
 
 def extraiZip(zip, estrutura):
-    for item in os.listdir(estrutura):
-        os.remove(os.path.join(estrutura, item))
+    _files = [Path(estrutura / x) for x in Path(estrutura).iterdir()]
+    for item in _files:
+        if item.is_file():
+            item.unlink()
+        elif item.is_dir():
+            shutil.rmtree(item)
     with zipfile.ZipFile(zip, 'r') as zip_ref:
         zip_ref.extractall(estrutura)
     if len(os.listdir(estrutura)) == 1:
@@ -58,3 +63,6 @@ def organizePPP(estrutura_pasta, pasta_ppp):
         errors.append('Pontos que não possuem zip: {}'.format(repr(list(set(ptos_estrutura.keys()) - set(zipfiles.keys())))))
 
     return errors
+
+if __name__ == "__main__":
+    organizePPP(estrutura_pasta=sys.argv[1], pasta_ppp=sys.argv[2])

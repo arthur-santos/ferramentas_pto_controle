@@ -65,7 +65,7 @@ class HandleRefreshDB():
                         results = transform(x, y, z)
                         for point in points:
                             if point['cod_ponto'] == point_name:
-                                point['latitude'], point['longitude'], point['altitude_ortometrica'] = results
+                                point['longitude'], point['latitude'], point['altitude_ortometrica'] = results
         return points
 
     def upsert(self, points):

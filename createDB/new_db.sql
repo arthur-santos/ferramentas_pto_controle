@@ -149,8 +149,8 @@ ALTER TABLE dominios.tipo_marco_limite OWNER TO postgres;
 
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (3,'Municipal');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (23,'Estadual');
-INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (24,'Internacional secundÃ¡rio');
-INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (25,'Internacional de referÃªncia');
+INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (24,'Internacional secundário');
+INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (25,'Internacional de referência');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (26,'Internacional principal');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (99,'Outros');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (9999,'A SER PREENCHIDO');
@@ -278,6 +278,7 @@ CREATE TABLE bpc.ponto_controle_p(
   projeto VARCHAR(255),
   engenheiro_responsavel VARCHAR(255),
   crea_engenheiro_responsavel VARCHAR(255),
+  cpf_engenheiro_responsavel VARCHAR(255),
   geometria_aproximada BOOLEAN NOT NULL DEFAULT FALSE,
   tipo_pto_ref_geod_topo SMALLINT NOT NULL REFERENCES dominios.tipo_pto_ref_geod_topo(code) DEFAULT 9999,
   tipo_marco_limite SMALLINT NOT NULL REFERENCES dominios.tipo_marco_limite(code) DEFAULT 9999,

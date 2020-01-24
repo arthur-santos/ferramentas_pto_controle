@@ -68,15 +68,16 @@ class HandleLoadToBPC():
             name = point.name
             files = [
                 point / '1_Formato_Nativo' / '{}.T01'.format(name),
-                point / '2_RINEX' / '{}.zip'.format(name)
+                point / '2_RINEX' / '{}.zip'.format(name),
+                point / '8_Monografia' / '{}.pdf'.format(name)
             ]
             path_ppp = point / '6_Processamento_PPP'
-            path_mono = point / '8_Monografia' / '{}.pdf'.format(point)
             for child in path_ppp.iterdir():
                 if child.suffix == '.pdf':
                     files.append(child)
-            if path_mono.exists():
-                files.append(path_mono)
+            # for item in files:
+                # if not item.exists():
+                    # raise FileNotFoundError(f'O arquivo {item} não existe. Verifique a estrutura de pastas.')
             zf = zipfile.ZipFile(
                 Path(self.output, '{}.zip'.format(name)), 'w', zipfile.ZIP_DEFLATED)
             for item in files:

@@ -30,6 +30,7 @@ __copyright__ = '(C) 2019 by 1CGEO/DSG'
 __revision__ = '$Format:%H$'
 
 import subprocess
+from pathlib import Path
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFile,
@@ -136,12 +137,14 @@ class LoadToBPC(QgsProcessingAlgorithm):
         handle = HandleLoadToBPC(folder_in, folder_out)
         where_clausule = handle.getWhereClausule()
 
-        db_string = "dbname='{}' host='{}' port='{}' user='{}' password='{}'".format(
+        db_string = "PG:dbname={} host={} port={} user={} password={}".format(
             bdname, server_ip, port, user, password)
 
-        process = 'ogr2ogr -f GPKG "{}\\pontos_exportados.gpkg" PG:"{}" -sql "SELECT * FROM bpc.ponto_controle_p {}"'.format(
-            folder_out, db_string, where_clausule)
-        subprocess.run(process)
+        sql_string = f"SELECT * FROM bpc.ponto_controle_p {where_clausule}"
+
+        gpkg_path = Path(folder_out, 'pontos_exportados.gpkg')
+
+        subprocess.run(["ogr2ogr", "-f", "GPKG", f"{gpkg_path}", f"{db_string}", "-sql", f"{sql_string}"])
 
         return {self.OUTPUT: ''}
 

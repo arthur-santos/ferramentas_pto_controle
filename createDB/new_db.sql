@@ -25,9 +25,9 @@ INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (2, 'Entroncamento 
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (3, 'Cerca ou muro');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (4, 'Elemento identificável no solo');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (5, 'Elemento não identificável no solo');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (6, 'Topo de vegetação'); -- Teoricamente se encaixaria em 4 ou 5, ou existe algum ponto cuja base é uma árvore?
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (6, 'Topo de vegetação');
 INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (7, 'Abaixo de vegetação');
-INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (9999, 'A SER PREENCHIDO'); --99 outros?
+INSERT INTO dominios.classificacao_ponto (code, nome) VALUES (9999, 'A SER PREENCHIDO');
 
 CREATE TABLE dominios.tipo_ref (
 	 code smallint NOT NULL,
@@ -55,7 +55,7 @@ INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (3,'WGS-84');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (4,'Córrego Alegre');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (5,'Astro Chuá');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (6,'Outra referência');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (7,'SAD-69 (96)'); --??
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (7,'SAD-69 (96)');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.referencial_altim (
@@ -169,7 +169,7 @@ INSERT INTO dominios.rede_referencia (code,code_name) VALUES (14,'Nacional');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (15,'Privada');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
-CREATE TABLE dominios.referencial_grav ( -- gravimétrico implica no uso de um gravímetro?
+CREATE TABLE dominios.referencial_grav (
 	 code smallint NOT NULL,
 	 code_name text NOT NULL,
 	 CONSTRAINT referencial_grav_pk PRIMARY KEY (code)
@@ -196,7 +196,7 @@ INSERT INTO dominios.situacao_marco (code,code_name) VALUES (0,'Desconhecida');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (1,'Bom');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (2,'Destruído');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (3,'Destruído sem chapa');
-INSERT INTO dominios.situacao_marco (code,code_name) VALUES (4,'Destruí­do com chapa danificada'); --Itens 3 e 4 são especializações de 2
+INSERT INTO dominios.situacao_marco (code,code_name) VALUES (4,'Destruí­do com chapa danificada');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (5,'Não encontrado');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (6,'Não visitado');
 INSERT INTO dominios.situacao_marco (code,code_name) VALUES (7,'Não construí­do');
@@ -221,7 +221,8 @@ CREATE TABLE bpc.controle_medicao_a(
   id SERIAL NOT NULL PRIMARY KEY,
 	nome VARCHAR(255) NOT NULL,
   total_pontos_aprovados smallint NOT NULL DEFAULT 0,
-  total_pontos_previstos smallint NOT NULL DEFAULT 0,-- Talvez inserir qtd de pontos em processo de avaliação
+  total_pontos_em_avaliacao smallint NOT NULL DEFAULT 0,
+  total_pontos_previstos smallint NOT NULL DEFAULT 0,
   lote VARCHAR(255),
   geom geometry(Polygon,4674) NOT NULL
 );
@@ -246,7 +247,7 @@ CREATE TABLE bpc.ponto_controle_p(
   fuso VARCHAR(255),
   meridiano_central VARCHAR(255),
   tipo_situacao SMALLINT NOT NULL REFERENCES dominios.tipo_situacao(code) DEFAULT 9999,
-  reserva BOOLEAN DEFAULT FALSE, --not null?
+  reserva BOOLEAN NOT NULL DEFAULT FALSE,
   lote VARCHAR(255),
   latitude_planejada REAL, --graus decimais
   longitude_planejada REAL, --graus decimais
@@ -257,7 +258,7 @@ CREATE TABLE bpc.ponto_controle_p(
   observacao VARCHAR(255),
   metodo_posicionamento SMALLINT NOT NULL REFERENCES dominios.metodo_posicionamento(code) DEFAULT 9999,
   ponto_base VARCHAR(255),
-  materializado BOOLEAN DEFAULT FALSE, --not null?
+  materializado BOOLEAN NOT NULL DEFAULT FALSE,
   altura_antena REAL, --metros
   tipo_medicao_altura SMALLINT NOT NULL REFERENCES dominios.tipo_medicao_altura(code) DEFAULT 9999,
   referencia_medicao_altura SMALLINT NOT NULL REFERENCES dominios.referencia_medicao_altura(code) DEFAULT 9999,

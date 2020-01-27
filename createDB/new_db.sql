@@ -209,7 +209,7 @@ CREATE TABLE dominios.insumo_medicao (
 );
 ALTER TABLE dominios.insumo_medicao OWNER TO postgres;
 
-INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (1,'Aerotriangulação');
+INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (1,'Fototriangulação');
 INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (2,'Carta Topográfica');
 INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (3,'Ortoimagem');
 INSERT INTO dominios.insumo_medicao (code,code_name) VALUES (9999,'A SER PREENCHIDO');
@@ -322,7 +322,6 @@ CREATE TABLE bpc.ponto_controle_virtual_p(
   projeto VARCHAR(255),
   engenheiro_responsavel VARCHAR(255),
   crea_engenheiro_responsavel VARCHAR(255),
-  monografia VARCHAR(255),
   geom geometry(POINTZ,4674) NOT NULL
 );
 CREATE INDEX ponto_controle_virtual_p_geom ON bpc.ponto_controle_virtual_p USING gist (geom);

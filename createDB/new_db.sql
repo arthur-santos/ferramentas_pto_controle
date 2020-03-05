@@ -54,8 +54,8 @@ INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (2,'SIRGAS2000');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (3,'WGS-84');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (4,'Córrego Alegre');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (5,'Astro Chuá');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (6,'Outra referência');
-INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (7,'SAD-69 (96)');
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (6,'SAD-69 (96)');
+INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (99,'Outra referência');
 INSERT INTO dominios.sistema_geodesico (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.referencial_altim (
@@ -119,6 +119,7 @@ INSERT INTO dominios.orbita (code,code_name) VALUES (1,'Ultra Rápida (predita)'
 INSERT INTO dominios.orbita (code,code_name) VALUES (2,'Ultra Rápida (observada)');
 INSERT INTO dominios.orbita (code,code_name) VALUES (3,'Rápida');
 INSERT INTO dominios.orbita (code,code_name) VALUES (4,'Final');
+INSERT INTO dominios.orbita (code,code_name) VALUES (97,'Não aplicável');
 INSERT INTO dominios.orbita (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.tipo_pto_ref_geod_topo (
@@ -152,6 +153,7 @@ INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (23,'Estadual');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (24,'Internacional secundário');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (25,'Internacional de referência');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (26,'Internacional principal');
+INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (97,'Não aplicável');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (99,'Outros');
 INSERT INTO dominios.tipo_marco_limite (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
@@ -167,6 +169,7 @@ INSERT INTO dominios.rede_referencia (code,code_name) VALUES (2,'Estadual');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (3,'Municipal');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (14,'Nacional');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (15,'Privada');
+INSERT INTO dominios.rede_referencia (code,code_name) VALUES (97,'Não aplicável');
 INSERT INTO dominios.rede_referencia (code,code_name) VALUES (9999,'A SER PREENCHIDO');
 
 CREATE TABLE dominios.referencial_grav (
@@ -288,10 +291,10 @@ CREATE TABLE bpc.ponto_controle_p(
   situacao_marco SMALLINT NOT NULL REFERENCES dominios.situacao_marco(code) DEFAULT 9999,
   data_visita DATE,
   valor_gravidade REAL,
-  possui_monografia BOOLEAN  DEFAULT FALSE,
+  possui_monografia BOOLEAN NOT NULL DEFAULT FALSE,
   numero_fotos SMALLINT,
-  possui_croqui BOOLEAN DEFAULT TRUE,
-  possui_arquivo_rastreio BOOLEAN  DEFAULT TRUE,
+  possui_croqui BOOLEAN NOT NULL DEFAULT TRUE,
+  possui_arquivo_rastreio BOOLEAN NOT NULL DEFAULT TRUE,
   geom geometry(POINT,4674) NOT NULL
 );
 CREATE INDEX ponto_controle_p_geom ON bpc.ponto_controle_p USING gist (geom);

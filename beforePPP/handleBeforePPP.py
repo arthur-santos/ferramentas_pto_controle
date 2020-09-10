@@ -33,11 +33,13 @@ def criaPastas(pasta):
 
 
 def zipaPPP(pasta):
-    for root, dirs, files in os.walk(pasta):
-        if Path(root).parts[-1] == "2_RINEX":
-            pto = Path(root).parts[-2]
-            if (pto + ".18n") in files and (pto + ".18o") in files and not (pto + ".zip") in files:
-                zf = zipfile.ZipFile(os.path.join(
-                    root, pto + ".zip"), "w", zipfile.ZIP_DEFLATED)
-                zf.write(os.path.join(root, pto + ".18n"), pto + ".18n")
-                zf.write(os.path.join(root, pto + ".18o"), pto + ".18o")
+    to_zip = [x for x in Path(pasta).rglob('2_RINEX/*') if re.match(r'\.\d\d[on]',  x.suffix)]
+    points = [x.parts[-3] for x in to_zip]
+    for point in points:
+        filtered = list(filter(lambda x: x.stem == point,to_zip))
+        if filtered:
+            write_path = filtered[0].parent / f'{filtered[0].parts[-3]}.zip'
+            print(write_path)
+            zf =  zipfile.ZipFile(write_path, "w", zipfile.ZIP_DEFLATED)
+            for item in filtered:
+                zf.write(write_path, item.name)

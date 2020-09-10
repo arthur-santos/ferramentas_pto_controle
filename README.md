@@ -62,10 +62,10 @@ Tipo de referência | tipo_ref | Ver (*)
 Sistema geodésico | sistema_geodesico | Ver (*)
 Referencial altimétrico | referencial_alt | Ver (*)
 Referencial gravimétrico | referencial_grav | Ver (*)
-Meridiano central | meridiano_central | Exemplo: 23S
-Fuso | fuso | Fuso da região de medição do ponto. Ex: XXXXXXXXXXXXXXXX
+Meridiano central | meridiano_central | Meridiano em relação ao globo. Ex: 51
+Fuso | fuso | Fuso da região de medição do ponto. Ex: 23S
 Outra referência planimétrica | outra_ref_plan | Caso exista uma segunda referência planimétrica
-Fuso horário | fuso_horario | Ex: XXXXXXXXX
+Fuso horário | fuso_horario | Ex: -3
 Precisão vertical esperada | precisao_vertical_esperada | Em metros. Ex: 0.08
 Precisão horizontal esperada | precisao_horizontal_esperada | Em metros. Ex: 0.03
 Referencial altimétrico | referencial_altim (*) | Ex: Imbituba

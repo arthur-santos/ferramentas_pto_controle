@@ -52,39 +52,39 @@ Os seguintes atributos do objeto **validacao** *precisam* ser definidos para uma
 - Altura máxima da antena: alt_max_ant
 - Duração mínima do rastreio: dur_min
 
-Os seguintes atributos do objeto **default** podem ser pré-definidos para compartilhar informações comuns aos pontos. Os seguintes atributos podem ser definidos:
+Os seguintes atributos do objeto **default** podem ser pré-definidos para compartilhar informações comuns aos pontos. Os seguintes atributos podem ser utilizados:
 
-Atributo | Atributo no JSON
-| ------ | ------ |
-Modelo do GPS | modelo_gps
-Modelo da antena | modelo_antena
-Tipo de referência | tipo_ref (*)
-Sistema geodésico | sistema_geodesico (*)
-Referencial altimétrico | referencial_alt (*)
-Referencial gravimétrico | referencial_grav (*)
-Meridiano central | meridiano_central
-Fuso | fuso
-Outra referência planimétrica | outra_ref_plan
-Fuso horário | fuso_horario
-Precisão vertical esperada | precisao_vertical_esperada
-Precisão horizontal esperada | precisao_horizontal_esperada
-Referencial altimétrico | referencial_altim (*)
-Outro referencial altimétrico | outro_ref_alt
-Lote | lote
-Método de posicionamento | metodo_posicionamento (*)
-Ponto base | ponto_base
-Máscara de elevação | mascara_elevacao
-Taxa de gravação | taxa_gravacao
-Modelo geoidal | modelo_geoidal (*)
-Órgão executante | orgao_executante
-Projeto | projeto
-Engenheiro responsável | engenheiro_responsavel
-CREA do engenheiro responsável | crea_engenheiro_responsavel
-CPF do engenheiro responsável | cpf_engenheiro_responsavel
-Geometria aproximada | geometria_aproximada (True ou False)
-Tipo de referência geodésica | tipo_pto_ref_geod_topo (*)
-Rede de referência | rede_referencia (*)
-Referencial gravimétrico | referencial_grav (*)
+Atributo | Atributo no JSON | Características / Exemplos
+| ------ | ------ | ------ |
+Modelo do GPS | modelo_gps | Ex: Trimble 5800
+Modelo da antena | modelo_antena | Ex: Trimble CFX-750
+Tipo de referência | tipo_ref | Ver (*)
+Sistema geodésico | sistema_geodesico | Ver (*)
+Referencial altimétrico | referencial_alt | Ver (*)
+Referencial gravimétrico | referencial_grav | Ver (*)
+Meridiano central | meridiano_central | Exemplo: 23S
+Fuso | fuso | Fuso da região de medição do ponto. Ex: XXXXXXXXXXXXXXXX
+Outra referência planimétrica | outra_ref_plan | Caso exista uma segunda referência planimétrica
+Fuso horário | fuso_horario | Ex: XXXXXXXXX
+Precisão vertical esperada | precisao_vertical_esperada | Em metros. Ex: 0.08
+Precisão horizontal esperada | precisao_horizontal_esperada | Em metros. Ex: 0.03
+Referencial altimétrico | referencial_altim (*) | Ex: Imbituba
+Outro referencial altimétrico | outro_ref_alt | Caso exista uma segunda referência altimétrica
+Lote | lote | Ex: 1, A, Lote 2, etc
+Método de posicionamento | metodo_posicionamento | Ver (*)
+Ponto base | ponto_base | Base em caso de posicionamento relativo. Ex: AC-HV-1
+Máscara de elevação | mascara_elevacao | Em graus, sem o símbolo °. Ex: 10
+Taxa de gravação | taxa_gravacao | Em segundos. Ex: 5
+Modelo geoidal | modelo_geoidal | Ver (*)
+Órgão executante | orgao_executante | OM responsável pela medição. Ex: 1CGEO
+Projeto | projeto | Ex: Projeto A, Medição B, etc
+Engenheiro responsável | engenheiro_responsavel | Ex: Cap Engenheiro Responsável
+CREA do engenheiro responsável | crea_engenheiro_responsavel | Ex: RJ00000
+CPF do engenheiro responsável | cpf_engenheiro_responsavel | Ex: 000.000.000-00
+Geometria aproximada | geometria_aproximada | Booleano (True ou False)
+Tipo de referência geodésica | tipo_pto_ref_geod_topo | Ver (*)
+Rede de referência | rede_referencia | Ver (*)
+Referencial gravimétrico | referencial_grav | (*)
 
 Valores em __(*)__ devem usar code_list, disponível nas tabelas de domínio do banco de pontos de controle. (Ou na [sql](createDB/new_db.sql) do banco)
 
@@ -92,6 +92,24 @@ Notas:
 - O campo __validação__ é de preenchimento obrigatório. Caso não esteja preenchido corretamente a rotina não será executada
 - Caso o atributo não seja definido no objeto __default__, ele será pesquisado no CSV. Opte por definir valores default no JSON caso os pontos de controle compartilhem o mesmo valor de atributo, mas em casos específicos a definição dos valores poderá ser feita diretamente no CSV.
 - Cuidado com a tipologia do arquivo JSON (uso de aspas duplas, uso de ':' para definir um atributo/objeto, chaves devem estar fechadas, etc)
+
+### Notas sobre o preenchimento do arquivo csv
+A grande maioria das informações sobre os pontos de controle são extraídas do arquivo .csv (coluna cujo cabeçalho é o nome do atributo) e do campo "default" do arquivo .json (que compartilha informações de um conjunto de pontos). Todos os campos utilizáveis são definidos em [Campos Utilizáveis](https://github.com/1cgeo/ferramentas_pto_controle/blob/master/validatePoints/evaluateStructure.py#L213-L220). Para o correto funcionamento da rotina 2, todos os atributos definidos em [Campos necessários no CSV](https://github.com/1cgeo/ferramentas_pto_controle/blob/master/validatePoints/evaluateStructure.py#L223-L224) precisam estar no arquivo csv. São eles:
+
+Atributo | Atributo no CSV (nome da coluna) | Características / Exemplos
+| ------ | ------ | ------ |
+Código do ponto | cod_ponto | (Estado)-(Tipo de precisão)-(Código sem zero à esquerda). Exemplo: RS-HV-1
+Medidor | medidor | Ex: 3° Sgt Medidor
+Data do rastreio | data_rastreio | Data no formato AAAA-MM-DD. Ex: 2020-02-23
+Inicio do rastreio | inicio_rastreio | Horário no formato HH:MM. Ex: 13:34
+Fim do rastreio | fim_rastreio | Horário no formato HH:MM. Ex: 14:26
+Materializado | materializado | Booleano (True/False) que informa se o ponto é / foi materualizado. Ex: True
+Altura da antena | altura_antena | Altura da antena em metros em relação ao solo. Ex: 1.3
+Tipo de medição da altura | tipo_medicao_altura | Ver (*)
+Referência de medição de altura | referencia_medicao_altura | Ver (*)
+Altura do objeto | altura_objeto | Altura do objeto (muro, cercas, telhados, etc) em metros, caso medição ocorra acima dele. Ex: 1.8
+Número de série do GPS | numero_serie_gps | Ex: 293441023
+Número de série da antena | numero_serie_antena | Ex: 039441923
 
 ## 3- Atualiza banco de dados de controle
 Esta rotina busca na pasta definida e nas suas subpastas pelos arquivos .CSV padrão de medição e atualiza o banco de dados de pontos de controle.

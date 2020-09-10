@@ -220,14 +220,14 @@ class EvaluateStructure():
                   "referencial_grav", "situacao_marco", "data_visita", "valor_gravidade", "monografia", "numero_fotos", "possui_croqui", "possui_arquivo_rastreio"]
 
         # Columns required for validation
-        required = ["cod_ponto", "medidor", "data_rastreio", "inicio_rastreio", "fim_rastreio", "classificacao_ponto", "observacao", "materializado", "altura_antena",
+        required = ["cod_ponto", "medidor", "data_rastreio", "inicio_rastreio", "fim_rastreio", "observacao", "materializado", "altura_antena",
                     "tipo_medicao_altura", "referencia_medicao_altura", "altura_objeto", "numero_serie_gps", "numero_serie_antena"]
 
         optional = ["tipo_ref", "meridiano_central", "fuso", "sistema_geodesico", "outra_ref_plan", "fuso_horario", "precisao_vertical_esperada",
                     "referencial_altim", "outro_ref_alt", "reserva", "lote", "latitude_planejada", "longitude_planejada", "metodo_posicionamento",
                     "ponto_base", "mascara_elevacao", "taxa_gravacao", "modelo_gps", "modelo_antena", "modelo_geoidal", "precisao_horizontal_esperada",
                     "orgao_executante", "projeto", "engenheiro_responsavel", "crea_engenheiro_responsavel", "geometria_aproximada", "tipo_pto_ref_geod_topo",
-                    "tipo_marco_limite", "rede_referencia", "referencial_grav", "situacao_marco", "data_visita", "valor_gravidade"]
+                    "tipo_marco_limite", "rede_referencia", "referencial_grav", "situacao_marco", "data_visita", "valor_gravidade", "classificacao_ponto"]
 
         ptos = []
 

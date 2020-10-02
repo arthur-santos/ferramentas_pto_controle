@@ -225,7 +225,7 @@ class ValidationDate(QgsProcessingParameterString):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
-        if re.match(r'20\d\d-[01][1-9]-[0-3]\d', value):
+        if re.match(r'20\d\d-[01]\d-[0-3]\d', value):
             return True
 
 

@@ -34,12 +34,11 @@ def criaPastas(pasta):
 
 def zipaPPP(pasta):
     to_zip = [x for x in Path(pasta).rglob('2_RINEX/*') if re.match(r'\.\d\d[on]',  x.suffix)]
-    points = [x.parts[-3] for x in to_zip]
+    points = set([x.parts[-3] for x in to_zip])
     for point in points:
         filtered = list(filter(lambda x: x.stem == point,to_zip))
         if filtered:
             write_path = filtered[0].parent / f'{filtered[0].parts[-3]}.zip'
-            print(write_path)
-            zf =  zipfile.ZipFile(write_path, "w", zipfile.ZIP_DEFLATED)
-            for item in filtered:
-                zf.write(write_path, item.name)
+            with zipfile.ZipFile(write_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for item in filtered:
+                    zf.write(item, item.name)

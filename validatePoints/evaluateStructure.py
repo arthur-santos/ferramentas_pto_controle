@@ -407,7 +407,7 @@ class EvaluateStructure():
         erros += self.no_folders(pasta)
         files = [f for f in listdir(pasta) if isfile(join(pasta, f))]
         fotos_ok = []
-        foto_regex = "^{0}_(360|3[0-5][0-9]|[0-2][0-9][0-9])_FOTO.(jpg|JPG)$".format(pto)
+        foto_regex = "^{0}_(360|3[0-5][0-9]|[0-2][0-9][0-9])_FOTO.(jpg|JPG|jpeg|JPEG)$".format(pto)
 
         for f in files:
             if search(foto_regex, f):
@@ -428,7 +428,7 @@ class EvaluateStructure():
         erros = []
         erros += self.no_folders(pasta)
         files = [f for f in listdir(pasta) if isfile(join(pasta, f))]
-        foto_regex = r"^{0}_\d+_FOTO_AUX.(jpg|JPG)$".format(pto)
+        foto_regex = r"^{0}_\d+_FOTO_AUX.(jpg|JPG|jpeg|JPEG)$".format(pto)
         for f in files:
             if search(foto_regex, f):
                 pass
@@ -443,7 +443,7 @@ class EvaluateStructure():
     def evaluate_croqui(self, pasta, pto):
         erros = []
         erros += self.no_folders(pasta)
-        files = [f.replace(".JPG", ".jpg")
+        files = [f.replace(".JPG", ".jpg").replace(".JPEG", ".jpg").replace(".jpeg", ".jpg")
                  for f in listdir(pasta) if isfile(join(pasta, f))]
         arquivos_incorretos = set(files).difference(
             ["Thumbs.db", "desktop.ini", "{0}_CROQUI.jpg".format(pto)])

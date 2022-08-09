@@ -60,7 +60,7 @@ Modelo do GPS | modelo_gps | Ex: Trimble 5800
 Modelo da antena | modelo_antena | Ex: Trimble CFX-750
 Tipo de referência | tipo_ref | Ver (*)
 Sistema geodésico | sistema_geodesico | Ver (*)
-Referencial altimétrico | referencial_alt | Ver (*)
+Referencial altimétrico | referencial_altim | Ver (*)
 Referencial gravimétrico | referencial_grav | Ver (*)
 Meridiano central | meridiano_central | Meridiano em relação ao globo. Ex: 51
 Fuso | fuso | Fuso da região de medição do ponto. Ex: 23S

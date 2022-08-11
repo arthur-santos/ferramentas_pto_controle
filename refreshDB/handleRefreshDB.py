@@ -60,8 +60,15 @@ class HandleRefreshDB():
                 if re.search(r'.[0-9][0-9]o$', f):
                     with open(os.path.join(root, f)) as rinex:
                         lines = rinex.readlines()
-                        point_name = lines[4].split(' ')[0]
-                        x, y, z = lines[8].strip().split(' ')[0:3]
+                        for line in lines:
+                            key = line[60:].strip()
+                            if key == 'END OF HEADER':
+                                break
+                            value = list(filter(None, line[:60].strip().split(' ')))
+                            if key == 'MARKER NAME':
+                                point_name = value[0]
+                            if key == 'APPROX POSITION XYZ':
+                                x, y, z = value[0], value[1], value[2]
                         results = transform(x, y, z)
                         for point in points:
                             if point['cod_ponto'] == point_name:

@@ -11,7 +11,7 @@ import psycopg2.extras
 from secretary import Renderer
 from processImages import processImages
 
-class HandleGenerateMonograpy():
+class HandleGenerateMonography():
 
     def __init__(self,path, host, port, db_name, user, password):
         self.conn = psycopg2.connect("host='{0}' port='{1}' dbname='{2}' user='{3}' password='{4}'".format(host, port, db_name, user, password))
@@ -142,6 +142,6 @@ class HandleGenerateMonograpy():
         print('Monografia do ponto {} concluída.'.format(pto["cod_ponto"]))
 
 if __name__ == "__main__":
-    generate = HandleGenerateMonograpy(*sys.argv[1:])
+    generate = HandleGenerateMonography(*sys.argv[1:])
     generate.getListOfPoints()
     generate.getFoldersFromStrucuture()

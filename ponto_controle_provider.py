@@ -38,6 +38,7 @@ from .afterPPP.afterPPP import AfterPPP
 from .distributeImages.distributeImages import DistributeImages
 from .loadToBPC.loadToBPC import LoadToBPC
 from .refreshFromPPP.refreshFromPPP import RefreshFromPPP
+from .generateMonography.generateMonography import GenerateMonography
 
 
 class PontoControleProvider(QgsProcessingProvider):
@@ -69,6 +70,7 @@ class PontoControleProvider(QgsProcessingProvider):
         self.addAlgorithm(DistributeImages())
         self.addAlgorithm(LoadToBPC())
         self.addAlgorithm(RefreshFromPPP())
+        self.addAlgorithm(GenerateMonography())
 
     def id(self):
         """
